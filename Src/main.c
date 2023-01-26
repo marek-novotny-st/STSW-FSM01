@@ -23,6 +23,8 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "fsm01m1_eval_pulse_driver.h"
+#include "fsm01m1_eval_diagnostic_driver.h"
+#include "fsm01m1_eval_driver.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -138,10 +140,13 @@ int main(void)
 //  STEVAL_FSM01M1_OUT2_CTRL_ON();
 
   TIM_HandleTypeDef htimx = {0};
-  FSM01M1_PULSE_PulseGen_TIM_Init(OUT1_TIM, 10, 65535, 25000, OUT1_TIM_CHANNEL, &htimx);
-  FSM01M1_PULSE_PulseGen_TIM_StartPWM(&htimx, OUT1_TIM_CHANNEL);
-  FSM01M1_PULSE_PulseGen_TIM_StartPWM(&htim4, OUT1_TIM_CHANNEL);
+  FSM01M1_PULSE_PulseGen_TIM_Init(OUT1_TIM, OUT1_TIM_CHANNEL, 1, 65535, 25000, &htimx);
+  FSM01M1_PULSE_PulseGen_TIM_Start(&htimx, OUT1_TIM_CHANNEL);
+  HAL_Delay(100);
+  FSM01M1_PULSE_PulseGen_TIM_Stop(&htimx, OUT1_TIM_CHANNEL);
+
   FSM01M1_DIAG_IO_Loop(&huart2);
+
   while(1) {
 
 	  /* USER_LED_GREEN test */

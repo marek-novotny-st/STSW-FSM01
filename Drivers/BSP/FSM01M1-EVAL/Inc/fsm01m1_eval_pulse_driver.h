@@ -19,7 +19,8 @@
 #define TEST_TIM_CHANNEL TIM_CHANNEL_3
 
 
-void FSM01M1_PULSE_PulseGen_TIM_Init(TIM_TypeDef * TIM, uint32_t Time_Base, uint32_t Period_Ticks, uint32_t Pulse_Ticks, uint32_t Channel, TIM_HandleTypeDef * htim_out);
-void FSM01M1_PULSE_PulseGen_TIM_StartPWM(TIM_HandleTypeDef * htim, uint32_t channel);
+void FSM01M1_PULSE_PulseGen_TIM_Init(TIM_TypeDef * TIM, uint32_t Channel, uint32_t Time_Base, uint32_t Period_Ticks, uint32_t Pulse_Ticks, TIM_HandleTypeDef * Export_Handle);
+void FSM01M1_PULSE_PulseGen_TIM_Start(TIM_HandleTypeDef * htim, uint32_t channel);
+void FSM01M1_PULSE_PulseGen_TIM_Stop(TIM_HandleTypeDef *htim, uint32_t channel);
 
 #endif /* BSP_FSM01M1_EVAL_INC_FSM01M1_EVAL_PULSE_DRIVER_H_ */
