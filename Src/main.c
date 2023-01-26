@@ -138,8 +138,8 @@ int main(void)
 //  STEVAL_FSM01M1_OUT2_CTRL_ON();
 
   TIM_HandleTypeDef htimx = {0};
-  FSM01M1_PULSE_PulseGen_TIM_Init(TEST_TIM, 10, 65535, 25000, TEST_TIM_CHANNEL, &htimx);
-  FSM01M1_PULSE_PulseGen_TIM_StartPWM(&htimx, TEST_TIM_CHANNEL);
+  FSM01M1_PULSE_PulseGen_TIM_Init(OUT1_TIM, 10, 65535, 25000, OUT1_TIM_CHANNEL, &htimx);
+  FSM01M1_PULSE_PulseGen_TIM_StartPWM(&htimx, OUT1_TIM_CHANNEL);
   FSM01M1_PULSE_PulseGen_TIM_StartPWM(&htim4, OUT1_TIM_CHANNEL);
   FSM01M1_DIAG_IO_Loop(&huart2);
   while(1) {

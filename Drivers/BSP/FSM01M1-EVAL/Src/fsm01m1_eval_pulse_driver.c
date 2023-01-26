@@ -35,29 +35,29 @@ void FSM01M1_PULSE_PulseGen_TIM_Init(TIM_TypeDef * TIM, uint32_t Time_Base, uint
 	htim_out->Instance = TIM;
 	htim_out->Init.Prescaler = Prescaler;
 	htim_out->Init.CounterMode = TIM_COUNTERMODE_UP;
-	htim_out->Init.Period = 65535;
+	htim_out->Init.Period = Period_Ticks;
 	htim_out->Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
 	htim_out->Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
-	if (HAL_TIM_PWM_Init(&htim_out) != HAL_OK)
+	if (HAL_TIM_PWM_Init(htim_out) != HAL_OK)
 	{
 	Error_Handler();
 	}
 	sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
 	sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
-	if (HAL_TIMEx_MasterConfigSynchronization(&htim_out, &sMasterConfig) != HAL_OK)
+	if (HAL_TIMEx_MasterConfigSynchronization(htim_out, &sMasterConfig) != HAL_OK)
 	{
 	Error_Handler();
 	}
 	sConfigOC.OCMode = TIM_OCMODE_PWM1;
-	sConfigOC.Pulse = 25000;
+	sConfigOC.Pulse = Pulse_Ticks;
 	sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
 	sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
-	if (HAL_TIM_PWM_ConfigChannel(&htim_out, &sConfigOC, Channel) != HAL_OK)
+	if (HAL_TIM_PWM_ConfigChannel(htim_out, &sConfigOC, Channel) != HAL_OK)
 	{
 	Error_Handler();
 	}
 
-	HAL_TIM_MspPostInit(&htim_out);
+	HAL_TIM_MspPostInit(htim_out);
 }
 
 void FSM01M1_PULSE_PulseGen_TIM_StartPWM(TIM_HandleTypeDef * htim, uint32_t channel) {
