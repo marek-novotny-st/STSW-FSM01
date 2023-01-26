@@ -23,6 +23,8 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "fsm01m1_eval_pulse_driver.h"
+#include "fsm01m1_eval_diagnostic_driver.h"
+#include "fsm01m1_eval_driver.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -137,11 +139,16 @@ int main(void)
 //  STEVAL_FSM01M1_OUT1_CTRL_ON();
 //  STEVAL_FSM01M1_OUT2_CTRL_ON();
 
-  TIM_HandleTypeDef htimx = {0};
-  FSM01M1_PULSE_PulseGen_TIM_Init(TEST_TIM, 10, 65535, 25000, TEST_TIM_CHANNEL, &htimx);
-  FSM01M1_PULSE_PulseGen_TIM_StartPWM(&htimx, TEST_TIM_CHANNEL);
-  FSM01M1_PULSE_PulseGen_TIM_StartPWM(&htim4, OUT1_TIM_CHANNEL);
+  FSM01M1_PULSE_PulseGen_TIM_Start(&htim4, TIM_CHANNEL_3);
+  HAL_Delay(500);
+  FSM01M1_PULSE_PulseGen_TIM_Stop(&htim4, TIM_CHANNEL_3);
+  FSM01M1_PULSE_PulseGen_TIM_Config(&htim4, TIM4, TIM_CHANNEL_3, 1, 65535, 50000);
+  FSM01M1_PULSE_PulseGen_TIM_Start(&htim4, TIM_CHANNEL_3);
+  HAL_Delay(500);
+  FSM01M1_PULSE_PulseGen_TIM_Stop(&htim4, TIM_CHANNEL_3);
+
   FSM01M1_DIAG_IO_Loop(&huart2);
+
   while(1) {
 
 	  /* USER_LED_GREEN test */
@@ -272,7 +279,7 @@ static void MX_TIM4_Init(void)
     Error_Handler();
   }
   sConfigOC.OCMode = TIM_OCMODE_PWM1;
-  sConfigOC.Pulse = 25000;
+  sConfigOC.Pulse = 5000;
   sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
   sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
   if (HAL_TIM_PWM_ConfigChannel(&htim4, &sConfigOC, TIM_CHANNEL_3) != HAL_OK)
