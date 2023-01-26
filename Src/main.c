@@ -139,11 +139,13 @@ int main(void)
 //  STEVAL_FSM01M1_OUT1_CTRL_ON();
 //  STEVAL_FSM01M1_OUT2_CTRL_ON();
 
-  TIM_HandleTypeDef htimx = {0};
-  FSM01M1_PULSE_PulseGen_TIM_Init(OUT1_TIM, OUT1_TIM_CHANNEL, 1, 65535, 25000, &htimx);
-  FSM01M1_PULSE_PulseGen_TIM_Start(&htimx, OUT1_TIM_CHANNEL);
-  HAL_Delay(100);
-  FSM01M1_PULSE_PulseGen_TIM_Stop(&htimx, OUT1_TIM_CHANNEL);
+  FSM01M1_PULSE_PulseGen_TIM_Start(&htim4, TIM_CHANNEL_3);
+  HAL_Delay(500);
+  FSM01M1_PULSE_PulseGen_TIM_Stop(&htim4, TIM_CHANNEL_3);
+  FSM01M1_PULSE_PulseGen_TIM_Config(&htim4, TIM4, TIM_CHANNEL_3, 1, 65535, 50000);
+  FSM01M1_PULSE_PulseGen_TIM_Start(&htim4, TIM_CHANNEL_3);
+  HAL_Delay(500);
+  FSM01M1_PULSE_PulseGen_TIM_Stop(&htim4, TIM_CHANNEL_3);
 
   FSM01M1_DIAG_IO_Loop(&huart2);
 
@@ -277,7 +279,7 @@ static void MX_TIM4_Init(void)
     Error_Handler();
   }
   sConfigOC.OCMode = TIM_OCMODE_PWM1;
-  sConfigOC.Pulse = 25000;
+  sConfigOC.Pulse = 5000;
   sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
   sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
   if (HAL_TIM_PWM_ConfigChannel(&htim4, &sConfigOC, TIM_CHANNEL_3) != HAL_OK)
