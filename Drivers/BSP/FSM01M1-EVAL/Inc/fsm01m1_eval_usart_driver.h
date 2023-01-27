@@ -37,7 +37,7 @@ typedef struct USART_Message_t {
 
  /* Exported functions -------------------------------------------------------*/
 // TODO: vystiznejsi nazvoslovi funkci
-int FSM01M1_USART_vCOM_Init(UART_HandleTypeDef * huart);
+int FSM01M1_USART_vCOM_Config(UART_HandleTypeDef * huart);
 USART_MessageTypeDef FSM01M1_USART_vCOM_CreateMessage();
 void FSM01M1_USART_vCOM_AppendInt(int i, USART_MessageTypeDef * msg);
 void FSM01M1_USART_vCOM_AppendFloat(float f, USART_MessageTypeDef * msg);
