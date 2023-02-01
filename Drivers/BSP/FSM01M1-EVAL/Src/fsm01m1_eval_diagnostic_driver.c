@@ -203,7 +203,7 @@ void FSM01M1_DIAG_list_actions() {
  * @retval None
  */
 void FSM01M1_DIAG_IO_Loop(UART_HandleTypeDef * huart) {
-	FSM01M1_USART_vCOM_Init(huart);
+	FSM01M1_USART_vCOM_Config(huart);
 	USART_MessageTypeDef cmd = FSM01M1_USART_vCOM_CreateMessage();
 
 	FSM01M1_DIAG_splash_msg();
@@ -570,7 +570,7 @@ void FSM01M1_DIAG_check_expected_voltages(bool * vcc, bool * vcc1, bool * out1, 
  * @retval None
  */
 void FSM01M1_DIAG_expected_voltages_test(bool vcc, bool vcc1, bool out1, bool vcc2, bool out2) {
-	FSM01M1_CHECK_voltage_out(&vcc, &vcc1, &out1, &vcc2, &out2);
+	FSM01M1_DIAG_check_expected_voltages(&vcc, &vcc1, &out1, &vcc2, &out2);
 
 	USART_MessageTypeDef msg = FSM01M1_USART_vCOM_CreateMessage();
 
