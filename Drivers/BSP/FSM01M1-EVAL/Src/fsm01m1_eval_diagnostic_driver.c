@@ -203,7 +203,7 @@ void FSM01M1_DIAG_list_actions() {
  * @retval None
  */
 void FSM01M1_DIAG_IO_Loop(UART_HandleTypeDef * huart) {
-	FSM01M1_USART_vCOM_Init(huart);
+	FSM01M1_USART_vCOM_Config(huart);
 	USART_MessageTypeDef cmd = FSM01M1_USART_vCOM_CreateMessage();
 
 	FSM01M1_DIAG_splash_msg();

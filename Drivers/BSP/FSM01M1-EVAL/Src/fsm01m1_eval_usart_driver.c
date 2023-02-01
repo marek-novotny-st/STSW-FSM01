@@ -24,20 +24,17 @@ char rx_buffer[USART_MAX_MSG_LEN];
 //
 
 /**
- * @brief Initialization of virtual COM port
- * @param huart: virtual COM Handle
+ * @brief Configuration of virtual COM
+ * @param huart: initialized virtual COM Handle
  * @retval int
  */
-int FSM01M1_USART_vCOM_Init(UART_HandleTypeDef * huart) {
+int FSM01M1_USART_vCOM_Config(UART_HandleTypeDef * huart) {
 	p_vCOM = huart;
-	p_vCOM->Instance = USART2;
 	p_vCOM->Init.BaudRate = 115200;
 	p_vCOM->Init.WordLength = UART_WORDLENGTH_8B;
 	p_vCOM->Init.StopBits = UART_STOPBITS_1;
 	p_vCOM->Init.Parity = UART_PARITY_NONE;
-	p_vCOM->Init.Mode = UART_MODE_TX_RX;
 	p_vCOM->Init.HwFlowCtl = UART_HWCONTROL_NONE;
-	p_vCOM->Init.OverSampling = UART_OVERSAMPLING_16;
 	if (HAL_UART_Init(p_vCOM) != HAL_OK)
 	{
 		return 1;
