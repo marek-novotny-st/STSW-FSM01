@@ -22,5 +22,7 @@
 void FSM01M1_PULSE_PulseGen_TIM_Config(TIM_HandleTypeDef * htim, TIM_TypeDef * TIM, uint32_t Channel, uint32_t Time_Base, uint32_t Period_Ticks, uint32_t Pulse_Ticks);
 void FSM01M1_PULSE_PulseGen_TIM_Start(TIM_HandleTypeDef * htim, uint32_t channel);
 void FSM01M1_PULSE_PulseGen_TIM_Stop(TIM_HandleTypeDef *htim, uint32_t channel);
+void FSM01M1_PULSE_PulseGen_TIM_Start_IT(TIM_HandleTypeDef * htim, uint32_t channel);
+void FSM01M1_PULSE_PulseGen_TIM_Stop_IT(TIM_HandleTypeDef *htim, uint32_t channel);
 
 #endif /* BSP_FSM01M1_EVAL_INC_FSM01M1_EVAL_PULSE_DRIVER_H_ */

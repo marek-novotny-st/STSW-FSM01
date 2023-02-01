@@ -6,6 +6,7 @@
  */
 
 #include "fsm01m1_eval_pulse_driver.h"
+#include "fsm01m1_eval_driver.h"
 #include "main.h"
 
 #define MICROS 1000000
@@ -73,3 +74,36 @@ void FSM01M1_PULSE_PulseGen_TIM_Stop(TIM_HandleTypeDef * htim, uint32_t channel)
 	HAL_TIM_PWM_Stop(htim, channel);
 }
 
+/**
+ * @brief starts pulse generating timer in interrupt mode
+ * @param htim: timer handle
+ * @param channel: timer channel
+ * @retval None
+ */
+void FSM01M1_PULSE_PulseGen_TIM_Start_IT(TIM_HandleTypeDef * htim, uint32_t channel) {
+	HAL_TIM_Base_Start_IT(htim);
+	HAL_TIM_PWM_Start_IT(htim, channel);
+}
+
+/**
+ * @brief stops pulse generating timer in interrupt mode
+ * @param htim: timer handle
+ * @param channel: timer channel
+ * @retval None
+ */
+void FSM01M1_PULSE_PulseGen_TIM_Stop_IT(TIM_HandleTypeDef * htim, uint32_t channel) {
+	HAL_TIM_Base_Stop_IT(htim);
+	HAL_TIM_PWM_Stop_IT(htim, channel);
+}
+
+void HAL_TIM_PWM_PulseFinishedCallback(TIM_HandleTypeDef *htim) {
+	/* turn on discharge path as soon as pulse finishes */
+	if (htim->Instance == TIM4) FSM01M1_OUT1_DSC_ON();
+	else if (htim->Instance == TIM1) FSM01M1_OUT2_DSC_ON();
+}
+
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
+	/* turn off discharge path for new period */
+	if (htim->Instance == TIM4) FSM01M1_OUT1_DSC_OFF();
+	else if (htim->Instance == TIM1) FSM01M1_OUT2_DSC_OFF();
+}

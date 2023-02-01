@@ -139,13 +139,57 @@ int main(void)
 //  STEVAL_FSM01M1_OUT1_CTRL_ON();
 //  STEVAL_FSM01M1_OUT2_CTRL_ON();
 
+  /* visual led test */
+  FSM01M1_PULSE_PulseGen_TIM_Config(&htim4, TIM4, TIM_CHANNEL_3, 1, 65535, 25000);
   FSM01M1_PULSE_PulseGen_TIM_Start(&htim4, TIM_CHANNEL_3);
   HAL_Delay(500);
   FSM01M1_PULSE_PulseGen_TIM_Stop(&htim4, TIM_CHANNEL_3);
+
   FSM01M1_PULSE_PulseGen_TIM_Config(&htim4, TIM4, TIM_CHANNEL_3, 1, 65535, 50000);
   FSM01M1_PULSE_PulseGen_TIM_Start(&htim4, TIM_CHANNEL_3);
   HAL_Delay(500);
   FSM01M1_PULSE_PulseGen_TIM_Stop(&htim4, TIM_CHANNEL_3);
+
+  /* positive test pulse */
+  FSM01M1_PULSE_PulseGen_TIM_Config(&htim4, TIM4, TIM_CHANNEL_3, 1, 300, 50);
+  FSM01M1_PULSE_PulseGen_TIM_Start(&htim4, TIM_CHANNEL_3);
+  HAL_Delay(500);
+  FSM01M1_PULSE_PulseGen_TIM_Stop(&htim4, TIM_CHANNEL_3);
+  // with discharge
+  FSM01M1_PULSE_PulseGen_TIM_Start_IT(&htim4, TIM_CHANNEL_3);
+  HAL_Delay(500);
+  FSM01M1_PULSE_PulseGen_TIM_Stop_IT(&htim4, TIM_CHANNEL_3);
+
+  /* negative test pulse */
+  FSM01M1_PULSE_PulseGen_TIM_Config(&htim4, TIM4, TIM_CHANNEL_3, 1, 300, 250);
+  FSM01M1_PULSE_PulseGen_TIM_Start(&htim4, TIM_CHANNEL_3);
+  HAL_Delay(500);
+  FSM01M1_PULSE_PulseGen_TIM_Stop(&htim4, TIM_CHANNEL_3);
+  // with discharge
+  FSM01M1_PULSE_PulseGen_TIM_Start_IT(&htim4, TIM_CHANNEL_3);
+  HAL_Delay(500);
+  FSM01M1_PULSE_PulseGen_TIM_Stop_IT(&htim4, TIM_CHANNEL_3);
+
+  /* C/D interface Class 1 */
+  // positive
+  FSM01M1_OUT1_DSC_OFF();
+  FSM01M1_PULSE_PulseGen_TIM_Config(&htim4, TIM4, TIM_CHANNEL_3, 1, 10000, 100);
+  FSM01M1_PULSE_PulseGen_TIM_Start(&htim4, TIM_CHANNEL_3);
+  HAL_Delay(500);
+  FSM01M1_PULSE_PulseGen_TIM_Stop(&htim4, TIM_CHANNEL_3);
+  // with discharge
+  FSM01M1_PULSE_PulseGen_TIM_Start_IT(&htim4, TIM_CHANNEL_3);
+  HAL_Delay(500);
+  FSM01M1_PULSE_PulseGen_TIM_Stop_IT(&htim4, TIM_CHANNEL_3);
+  // negative
+  FSM01M1_PULSE_PulseGen_TIM_Config(&htim4, TIM4, TIM_CHANNEL_3, 1, 10000, 9900);
+  FSM01M1_PULSE_PulseGen_TIM_Start(&htim4, TIM_CHANNEL_3);
+  HAL_Delay(500);
+  FSM01M1_PULSE_PulseGen_TIM_Stop(&htim4, TIM_CHANNEL_3);
+  // with discharge
+  FSM01M1_PULSE_PulseGen_TIM_Start_IT(&htim4, TIM_CHANNEL_3);
+  HAL_Delay(500);
+  FSM01M1_PULSE_PulseGen_TIM_Stop_IT(&htim4, TIM_CHANNEL_3);
 
   FSM01M1_DIAG_IO_Loop(&huart2);
 
@@ -279,7 +323,7 @@ static void MX_TIM4_Init(void)
     Error_Handler();
   }
   sConfigOC.OCMode = TIM_OCMODE_PWM1;
-  sConfigOC.Pulse = 5000;
+  sConfigOC.Pulse = 65535;
   sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
   sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
   if (HAL_TIM_PWM_ConfigChannel(&htim4, &sConfigOC, TIM_CHANNEL_3) != HAL_OK)
