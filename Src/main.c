@@ -172,7 +172,6 @@ int main(void)
 
   /* C/D interface Class 1 */
   // positive
-  FSM01M1_OUT1_DSC_OFF();
   FSM01M1_PULSE_PulseGen_TIM_Config(&htim4, TIM4, TIM_CHANNEL_3, 1, 10000, 100);
   FSM01M1_PULSE_PulseGen_TIM_Start(&htim4, TIM_CHANNEL_3);
   HAL_Delay(500);
