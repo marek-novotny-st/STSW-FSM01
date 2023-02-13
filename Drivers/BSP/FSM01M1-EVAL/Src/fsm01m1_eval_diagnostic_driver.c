@@ -227,7 +227,7 @@ void FSM01M1_DIAG_resolve(char * cmd, DIAG_DeviceTypeDef target) {
 	char * arg = strtok_r(cmd, " ", &token_ctx);
 	arg[strcspn(arg, "\r\n")] = '\0';
 
-	if (arg == NULL) return;
+	if (arg[0] == '\0') return;
 	else if (strcmp(arg, "vcc") == 0) FSM01M1_DIAG_resolve(NULL, vcc);
 	else if (strcmp(arg, "vcc1") == 0) FSM01M1_DIAG_resolve(NULL, vcc1);
 	else if (strcmp(arg, "vcc1_dsc") == 0) FSM01M1_DIAG_resolve(NULL, vcc1_dsc);
