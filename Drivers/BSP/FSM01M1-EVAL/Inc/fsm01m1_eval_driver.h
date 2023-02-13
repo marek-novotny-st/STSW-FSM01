@@ -98,14 +98,6 @@ void FSM01M1_TimeLoop_Short(void);
 void FSM01M1_TimeLoop_Short_div2(void);
 void FSM01M1_initialization(void);
 
-/* TEST_CASE routines */
-void FSM01M1_TEST_CASE_overcurrent_cutoff_test(void);
-void FSM01M1_TEST_CASE_simultaneous_demagnetization(void);
-void FSM01M1_TEST_CASE_SFTY_OFF(void);
-void FSM01M1_TEST_CASE_loss_off_GND(void);
-void FSM01M1_TEST_CASE_EMC_test_routine(void);
-void FSM01M1_TEST_CASE_VCCx_test_pulse_routine(void);
-
 /* LEDs */
 void FSM01M1_LD2_USER_ON(void);
 void FSM01M1_LD2_USER_OFF(void);

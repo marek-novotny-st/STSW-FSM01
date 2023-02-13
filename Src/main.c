@@ -113,14 +113,6 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 
-  /* Implicit test scenarios */
-  //STEVAL_FSM01M1_TEST_CASE_overcurrent_cutoff_test();
-  //STEVAL_FSM01M1_TEST_CASE_simultaneous_demagnetization();
-  //STEVAL_FSM01M1_TEST_CASE_SFTY_OFF();
-  //STEVAL_FSM01M1_TEST_CASE_loss_off_GND();
-  //STEVAL_FSM01M1_TEST_CASE_EMC_test_routine();
-  //STEVAL_FSM01M1_TEST_CASE_VCCx_test_pulse_routine();
-
   /* Static output configuration for test purposes */
   /* Turn-OFF OUT1 & OUT2 */
   FSM01M1_VCC1_OFF();
