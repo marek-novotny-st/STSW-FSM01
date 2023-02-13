@@ -73,7 +73,7 @@ void SPI_test_transaction(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-	uint16_t adc_read = 0;
+  uint16_t adc_read = 0;
 
   /* USER CODE END 1 */
 
@@ -113,14 +113,6 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 
-  /* Implicit test scenarios */
-  //STEVAL_FSM01M1_TEST_CASE_overcurrent_cutoff_test();
-  //STEVAL_FSM01M1_TEST_CASE_simultaneous_demagnetization();
-  //STEVAL_FSM01M1_TEST_CASE_SFTY_OFF();
-  //STEVAL_FSM01M1_TEST_CASE_loss_off_GND();
-  //STEVAL_FSM01M1_TEST_CASE_EMC_test_routine();
-  //STEVAL_FSM01M1_TEST_CASE_VCCx_test_pulse_routine();
-
   /* Static output configuration for test purposes */
   /* Turn-OFF OUT1 & OUT2 */
   FSM01M1_VCC1_OFF();
@@ -131,10 +123,8 @@ int main(void)
   /* Turn-ON OUT1 & OUT2 */
   FSM01M1_VCC1_ON();
   FSM01M1_VCC2_ON();
-//  STEVAL_FSM01M1_OUT1_CTRL_ON();
-//  STEVAL_FSM01M1_OUT2_CTRL_ON();
-
-  FSM01M1_DIAG_IO_Loop(&huart2);
+  FSM01M1_OUT1_CTRL_ON();
+  FSM01M1_OUT2_CTRL_ON();
 
   while(1) {
 
@@ -144,6 +134,8 @@ int main(void)
 
 	  FSM01M1_user_LED_green_OFF();
 	  FSM01M1_TimeLoop_Short();
+
+	  FSM01M1_DIAG_IO_Loop(&huart2);
   }
 
     /* USER CODE END WHILE */
