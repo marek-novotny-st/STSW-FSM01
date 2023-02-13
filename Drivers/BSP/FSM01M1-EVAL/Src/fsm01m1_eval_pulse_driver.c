@@ -11,6 +11,8 @@
 
 #define MICROS 1000000
 
+void FSM01M1_PULSE_DSC_Reset(TIM_HandleTypeDef * htim);
+
 /**
  * @brief Configures parameters of pulse generating timer
  * @param htim: configured PWM timer handle
@@ -61,6 +63,7 @@ void FSM01M1_PULSE_PulseGen_TIM_Config(TIM_HandleTypeDef * htim, TIM_TypeDef * T
  * @retval None
  */
 void FSM01M1_PULSE_PulseGen_TIM_Start(TIM_HandleTypeDef * htim, uint32_t channel) {
+	FSM01M1_PULSE_DSC_Reset(htim);
 	HAL_TIM_PWM_Start(htim, channel);
 }
 
@@ -72,6 +75,7 @@ void FSM01M1_PULSE_PulseGen_TIM_Start(TIM_HandleTypeDef * htim, uint32_t channel
  */
 void FSM01M1_PULSE_PulseGen_TIM_Stop(TIM_HandleTypeDef * htim, uint32_t channel) {
 	HAL_TIM_PWM_Stop(htim, channel);
+	FSM01M1_PULSE_DSC_Reset(htim);
 }
 
 /**
@@ -81,6 +85,7 @@ void FSM01M1_PULSE_PulseGen_TIM_Stop(TIM_HandleTypeDef * htim, uint32_t channel)
  * @retval None
  */
 void FSM01M1_PULSE_PulseGen_TIM_Start_IT(TIM_HandleTypeDef * htim, uint32_t channel) {
+	FSM01M1_PULSE_DSC_Reset(htim);
 	HAL_TIM_Base_Start_IT(htim);
 	HAL_TIM_PWM_Start_IT(htim, channel);
 }
@@ -92,8 +97,19 @@ void FSM01M1_PULSE_PulseGen_TIM_Start_IT(TIM_HandleTypeDef * htim, uint32_t chan
  * @retval None
  */
 void FSM01M1_PULSE_PulseGen_TIM_Stop_IT(TIM_HandleTypeDef * htim, uint32_t channel) {
-	HAL_TIM_Base_Stop_IT(htim);
 	HAL_TIM_PWM_Stop_IT(htim, channel);
+	HAL_TIM_Base_Stop_IT(htim);
+	FSM01M1_PULSE_DSC_Reset(htim);
+}
+
+/**
+ * @brief resets discharging circuits
+ * @param htim: timer handle
+ * @retval None
+ */
+void FSM01M1_PULSE_DSC_Reset(TIM_HandleTypeDef *htim) {
+	if (htim->Instance == TIM4) FSM01M1_OUT1_DSC_OFF();
+	else if (htim->Instance == TIM1) FSM01M1_OUT2_DSC_OFF();
 }
 
 void HAL_TIM_PWM_PulseFinishedCallback(TIM_HandleTypeDef *htim) {
