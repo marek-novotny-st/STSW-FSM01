@@ -56,6 +56,12 @@ void FSM01M1_TimeLoop_Short_div2() {
 	}
 }
 
+void TimeLoop_test_pulse() {
+	uint16_t i;
+
+	for(i = 0; i<0x3FFF; i++);
+}
+
 /**
  * @brief Initial setup testing procedure
  * @retval None
