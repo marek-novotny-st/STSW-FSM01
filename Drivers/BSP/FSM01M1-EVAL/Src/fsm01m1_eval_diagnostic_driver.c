@@ -18,11 +18,6 @@ typedef enum USART_Format_t {
 } USART_FormatTypeDef;
 
 /* Private variables ---------------------------------------------------------*/
-float VCC_ADC;
-float VCC1_ADC;
-float VCC2_ADC;
-float OUT1_ADC;
-float OUT2_ADC;
 
 /* buffer for command tokenization */
 char * token_ctx;
@@ -232,7 +227,7 @@ void FSM01M1_DIAG_resolve(char * cmd, DIAG_DeviceTypeDef target) {
 	char * arg = strtok_r(cmd, " ", &token_ctx);
 	arg[strcspn(arg, "\r\n")] = '\0';
 
-	if (arg == NULL) return;
+	if (arg[0] == '\0') return;
 	else if (strcmp(arg, "vcc") == 0) FSM01M1_DIAG_resolve(NULL, vcc);
 	else if (strcmp(arg, "vcc1") == 0) FSM01M1_DIAG_resolve(NULL, vcc1);
 	else if (strcmp(arg, "vcc1_dsc") == 0) FSM01M1_DIAG_resolve(NULL, vcc1_dsc);
@@ -484,157 +479,3 @@ void FSM01M1_DIAG_states() {
 		}
 	}
 }
-
-/**
- * @brief Compares expected voltage levels with real ones
- * @params expected switch states of devices
- * @retval None
- */
-void FSM01M1_DIAG_check_expected_voltages(bool * vcc, bool * vcc1, bool * out1, bool * vcc2, bool * out2) {
-	FSM01M1_OUT1_CTRL_OFF();
-	FSM01M1_VCC1_OFF();
-	FSM01M1_OUT2_CTRL_OFF();
-	FSM01M1_VCC2_OFF();
-	HAL_Delay(100);
-
-	/* Switch */
-	if (vcc1) FSM01M1_VCC1_ON();
-	if (vcc2) FSM01M1_VCC2_ON();
-	if (out1) FSM01M1_OUT1_CTRL_ON();
-	if (out2) FSM01M1_OUT2_CTRL_ON();
-	HAL_Delay(100);
-
-	FSM01M1_OUT1_CTRL_ON();
-	HAL_Delay(100);
-	/* ADC measurements */
-	VCC1_ADC = FSM01M1_ADC120_read_single_node(&hspi2, VCC_ADC_CHANNEL_ID);
-//	VCC1_ADC = STEVAL_FSM01M1_scan_voltage_point(&hspi2, VCC_ADC_CHANNEL_ID);
-//	VCC_ADC = STEVAL_FSM01M1_scan_voltage_point(&hspi2, OUT1_ADC_CHANNEL_ID);
-	VCC_ADC = FSM01M1_ADC120_read_single_node(&hspi2, OUT1_ADC_CHANNEL_ID);
-	OUT1_ADC = FSM01M1_ADC120_read_single_node(&hspi2, VCC2_ADC_CHANNEL_ID);
-	VCC2_ADC = FSM01M1_ADC120_read_single_node(&hspi2, OUT2_ADC_CHANNEL_ID);
-	OUT2_ADC = FSM01M1_ADC120_read_single_node(&hspi2, VCC1_ADC_CHANNEL_ID);
-
-	/* Criteria */
-
-	// Initialize result by checking Vcc
-	bool result = VCC_ADC >= FSM01M1_NOMINAL_VOLTAGE_THRESHOLD;
-	(* vcc) = result;
-
-
-	if (vcc1) {
-		bool check = VCC1_ADC >= FSM01M1_NOMINAL_VOLTAGE_THRESHOLD;
-		result = result && check;
-		(* vcc1) = check;
-	}
-	else {
-		bool check = VCC1_ADC <= FSM01M1_ZERO_VOLTAGE_THRESHOLD;
-		result = result && check;
-		(* vcc1) = check;
-	}
-	if (out1) {
-		bool check = OUT1_ADC >= FSM01M1_NOMINAL_VOLTAGE_THRESHOLD;
-		result = result && check;
-		(* out1) = check;
-	}
-	else {
-		bool check = OUT1_ADC <= FSM01M1_ZERO_VOLTAGE_THRESHOLD;
-		result = result && check;
-		(* out1) = check;
-	}
-	if (vcc2) {
-		bool check = VCC2_ADC >= FSM01M1_NOMINAL_VOLTAGE_THRESHOLD;
-		result = result && check;
-		(* vcc2) = check;
-	}
-	else {
-		bool check = VCC2_ADC <= FSM01M1_ZERO_VOLTAGE_THRESHOLD;
-		result = result && check;
-		(* vcc2) = check;
-	}
-	if (out2) {
-		bool check = OUT2_ADC >= FSM01M1_NOMINAL_VOLTAGE_THRESHOLD;
-		result = result && check;
-		(* out2) = check;
-	}
-	else {
-		bool check = OUT2_ADC <= FSM01M1_ZERO_VOLTAGE_THRESHOLD;
-		result = result && check;
-		(* out2) = check;
-	}
-}
-
-/**
- * @brief Provides testing service for expected voltage levels
- * @params expected switch states of devices
- * @retval None
- */
-void FSM01M1_DIAG_expected_voltages_test(bool vcc, bool vcc1, bool out1, bool vcc2, bool out2) {
-	FSM01M1_DIAG_check_expected_voltages(&vcc, &vcc1, &out1, &vcc2, &out2);
-
-	USART_MessageTypeDef msg = FSM01M1_USART_vCOM_CreateMessage();
-
-	bool result = vcc && vcc1 && out1 && vcc2 && out2;
-
-	// Test VCC
-	if (vcc) {
-		msg.AppendStr("VCC PASSED ", &msg);
-		msg.AppendFloat(VCC_ADC, &msg);
-	}
-	else {
-		msg.AppendStr("VCC FAILED ", &msg);
-		msg.AppendFloat(VCC_ADC, &msg);
-	}
-	FSM01M1_USART_vCOM_FlushWriteLine(&msg);
-
-	// Test VCC1
-	if (vcc1) {
-		msg.AppendStr("VCC1 PASSED ", &msg);
-		msg.AppendFloat(VCC1_ADC, &msg);
-	}
-	else {
-		msg.AppendStr("VCC1 FAILED ", &msg);
-		msg.AppendFloat(VCC1_ADC, &msg);
-	}
-	FSM01M1_USART_vCOM_FlushWriteLine(&msg);
-
-	// Test OUT1
-	if (out1) {
-		msg.AppendStr("OUT1 PASSED ", &msg);
-		msg.AppendFloat(OUT1_ADC, &msg);
-	}
-	else {
-		msg.AppendStr("OUT1 FAILED ", &msg);
-		msg.AppendFloat(OUT1_ADC, &msg);
-	}
-	FSM01M1_USART_vCOM_FlushWriteLine(&msg);
-
-	// Test VCC2
-	if (vcc2) {
-		msg.AppendStr("VCC2 PASSED ", &msg);
-		msg.AppendFloat(VCC2_ADC, &msg);
-	}
-	else {
-		msg.AppendStr("VCC2 FAILED ", &msg);
-		msg.AppendFloat(VCC2_ADC, &msg);
-	}
-	FSM01M1_USART_vCOM_FlushWriteLine(&msg);
-
-	// Test OUT2
-	if (out2) {
-		msg.AppendStr("OUT2 PASSED ", &msg);
-		msg.AppendFloat(OUT2_ADC, &msg);
-	}
-	else {
-		msg.AppendStr("OUT2 FAILED ", &msg);
-		msg.AppendFloat(OUT2_ADC, &msg);
-	}
-	FSM01M1_USART_vCOM_FlushWriteLine(&msg);
-
-	if (!result) {
-		FSM01M1_user_LED_red_ON();
-		while(1);
-	}
-}
-
-

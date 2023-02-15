@@ -53,6 +53,12 @@ typedef struct
 /* exported variables */
 extern SPI_HandleTypeDef hspi2;
 
+extern float VCC_scan;
+extern float VCC1_scan;
+extern float VCC2_scan;
+extern float OUT1_scan;
+extern float OUT2_scan;
+
  /* Exported constants -------------------------------------------------------*/
 
 /** SPI Maximum Timeout values for flags waiting loops */
@@ -97,14 +103,6 @@ void FSM01M1_TimeLoop_Default(void);
 void FSM01M1_TimeLoop_Short(void);
 void FSM01M1_TimeLoop_Short_div2(void);
 void FSM01M1_initialization(void);
-
-/* TEST_CASE routines */
-void FSM01M1_TEST_CASE_overcurrent_cutoff_test(void);
-void FSM01M1_TEST_CASE_simultaneous_demagnetization(void);
-void FSM01M1_TEST_CASE_SFTY_OFF(void);
-void FSM01M1_TEST_CASE_loss_off_GND(void);
-void FSM01M1_TEST_CASE_EMC_test_routine(void);
-void FSM01M1_TEST_CASE_VCCx_test_pulse_routine(void);
 
 /* LEDs */
 void FSM01M1_LD2_USER_ON(void);

@@ -9,7 +9,6 @@
 #define BSP_FSM01M1_EVAL_INC_FSM01M1_EVAL_DIAGNOSTIC_DRIVER_H_
 /* Includes ------------------------------------------------------------------*/
 #include <fsm01m1_eval_usart_driver.h>
-#include "stdbool.h"
 
 
 /* Exported types -------------------------------------------------------*/
@@ -46,10 +45,5 @@ typedef enum {
 
 /* Exported functions -------------------------------------------------------*/
 void FSM01M1_DIAG_IO_Loop(UART_HandleTypeDef * huart);
-
-/* CHECK routines */
-// TODO: finish test implementation and rename functions according to guidelines
-void FSM01M1_DIAG_check_expected_voltages(bool * vcc, bool * vcc1, bool * out1, bool * vcc2, bool * out2);
-void FSM01M1_DIAG_expected_voltages_test(bool vcc, bool vcc1, bool out1, bool vcc2, bool out2);
 
 #endif /* BSP_FSM01M1_EVAL_INC_FSM01M1_EVAL_DIAGNOSTIC_DRIVER_H_ */
