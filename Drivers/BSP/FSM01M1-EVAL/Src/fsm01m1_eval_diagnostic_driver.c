@@ -1,17 +1,30 @@
-/*
- * STEVAL-FSM01M1-diagnostic_driver.c
- *
- *  Created on: 28. 11. 2022
- *      Author: marek novotny
- */
+/**
+  ******************************************************************************
+  * @file    fsm01m1_eval_diagnostic_driver.c
+  * @author  ST Power Application Laboratory
+  * @version V1.0.0
+  * @brief   Provides functions for interactive board control and measurement
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright (c) 2023 STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  ******************************************************************************
+  */
 
 /* Includes ------------------------------------------------------------------*/
-#include <fsm01m1_eval_diagnostic_driver.h>
-#include <fsm01m1_eval_driver.h>
-#include <fsm01m1_eval_usart_driver.h>
+#include "fsm01m1_eval_diagnostic_driver.h"
+#include "fsm01m1_eval_driver.h"
+#include "fsm01m1_eval_usart_driver.h"
+#include "strtok_r.h"
 #include "string.h"
 
-/* Private types -------------------------------------------------------------*/
+/* Private typedef -----------------------------------------------------------*/
 typedef enum USART_Format_t {
 	numerical,
 	logical
@@ -57,12 +70,41 @@ DIAG_ActionTypeDef actions[7] = {
 };
 
 /* Private function prototypes -----------------------------------------------*/
+void FSM01M1_DIAG_splash_msg();
 void FSM01M1_DIAG_read(DIAG_DeviceTypeDef dev, USART_FormatTypeDef fmt);
 void FSM01M1_DIAG_reset_devices();
 void FSM01M1_DIAG_switch(DIAG_DeviceTypeDef dev, DIAG_ActionTypeDef act);
 void FSM01M1_DIAG_resolve(char * cmd, DIAG_DeviceTypeDef target);
 void FSM01M1_DIAG_levels();
 void FSM01M1_DIAG_states();
+
+/* Exported functions --------------------------------------------------------*/
+
+/**
+ * @brief Runs a diagnostic IO command line application
+ * @param huart: uart handle
+ * @retval None
+ */
+void FSM01M1_DIAG_IO_Loop(UART_HandleTypeDef * huart) {
+	FSM01M1_USART_vCOM_Config(huart);
+	USART_MessageTypeDef cmd = FSM01M1_USART_vCOM_CreateMessage();
+
+	FSM01M1_DIAG_splash_msg();
+	while(1) {
+		if (cmd.flag == ready) {
+			FSM01M1_DIAG_resolve(cmd.data, all);
+			cmd.Clear(&cmd);
+			cmd.flag = idle;
+
+			FSM01M1_USART_vCOM_WriteChar('\n');
+		}
+		if (cmd.flag == idle) {
+			FSM01M1_USART_vCOM_ReadLine(&cmd);
+		}
+	}
+}
+
+/* Private functions ---------------------------------------------------------*/
 
 /**
  * @brief Prints starting message
@@ -193,30 +235,6 @@ void FSM01M1_DIAG_list_actions() {
 }
 
 /**
- * @brief Runs a diagnostic IO command line application
- * @param huart: uart handle
- * @retval None
- */
-void FSM01M1_DIAG_IO_Loop(UART_HandleTypeDef * huart) {
-	FSM01M1_USART_vCOM_Config(huart);
-	USART_MessageTypeDef cmd = FSM01M1_USART_vCOM_CreateMessage();
-
-	FSM01M1_DIAG_splash_msg();
-	while(1) {
-		if (cmd.flag == ready) {
-			FSM01M1_DIAG_resolve(cmd.data, all);
-			cmd.Clear(&cmd);
-			cmd.flag = idle;
-
-			FSM01M1_USART_vCOM_WriteChar('\n');
-		}
-		if (cmd.flag == idle) {
-			FSM01M1_USART_vCOM_ReadLine(&cmd);
-		}
-	}
-}
-
-/**
  * @brief Provides command resolution services
  * @param cmd: command
  * @param target: device
@@ -224,7 +242,7 @@ void FSM01M1_DIAG_IO_Loop(UART_HandleTypeDef * huart) {
  */
 void FSM01M1_DIAG_resolve(char * cmd, DIAG_DeviceTypeDef target) {
 	if (cmd[0] == '\r' || cmd[0] == '\n') cmd = cmd + 1;
-	char * arg = strtok_r(cmd, " ", &token_ctx);
+	char * arg = (char *) strtok_r(cmd, " ", &token_ctx);
 	arg[strcspn(arg, "\r\n")] = '\0';
 
 	if (arg[0] == '\0') return;
@@ -437,7 +455,7 @@ void FSM01M1_DIAG_read(DIAG_DeviceTypeDef dev, USART_FormatTypeDef fmt) {
 	}
 
 	if (fmt == numerical) {
-		if (reading != -1.0) msg.AppendFloat(reading, &msg);
+		if (reading != -1.0f) msg.AppendFloat(reading, &msg);
 		else if (logic != -1) msg.AppendInt(logic, &msg);
 	}
 	else if (fmt == logical) {

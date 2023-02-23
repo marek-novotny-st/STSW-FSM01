@@ -1,17 +1,33 @@
-/*
- * STEVAL-FSM01M1_driver.h
- *
- *  Created on: Sep 20, 2021
- *      Author: vojtech elias
- */
+/**
+  ******************************************************************************
+  * @file    fsm01m1_eval_driver.h
+  * @author  ST Power Application Laboratory
+  * @version V1.0.0
+  * @brief   Provides functions for programmable board control and measurement
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright (c) 2023 STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  ******************************************************************************
+  */
 
+/* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef BSP_FSM01M1_EVAL_INC_FSM01M1_EVAL_DRIVER_H_
 #define BSP_FSM01M1_EVAL_INC_FSM01M1_EVAL_DRIVER_H_
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "stm32f4xx_hal.h"
-//#include "STEVAL-FSM01M1_pin_map.h"
 #include "adc120.h"
 
 /** @addtogroup X_NUCLEO_OUT02A1_Private_Constants STEVAL-FSM01M1 Private Constants
@@ -50,20 +66,17 @@ typedef struct
  * @}
  */
 
-/* exported variables */
+/* Exported variables --------------------------------------------------------*/
 extern SPI_HandleTypeDef hspi2;
 
 extern float VCC_scan;
 extern float VCC1_scan;
 extern float VCC2_scan;
+
 extern float OUT1_scan;
 extern float OUT2_scan;
 
- /* Exported constants -------------------------------------------------------*/
-
-/** SPI Maximum Timeout values for flags waiting loops */
-#define SPIx_TIMEOUT_MAX        ((uint32_t) 0x1000)
-
+/* Exported constants --------------------------------------------------------*/
 #define VCC1_ADC_CHANNEL_ID		(0)
 #define OUT1_ADC_CHANNEL_ID		(1)
 #define VCC2_ADC_CHANNEL_ID		(2)
@@ -97,7 +110,7 @@ extern float OUT2_scan;
 
 
 
- /* Exported functions -------------------------------------------------------*/
+/* Exported functions --------------------------------------------------------*/
 
 void FSM01M1_TimeLoop_Default(void);
 void FSM01M1_TimeLoop_Short(void);
@@ -168,5 +181,9 @@ float FSM01M1_ADC120_rescale_analog(float analog_val);
 float FSM01M1_ADC120_read_blind(SPI_HandleTypeDef *SpiHandle);
 float FSM01M1_ADC120_read_single_node(SPI_HandleTypeDef *SpiHandle, uint8_t voltage_channel);
 uint8_t FSM01M1_scan_voltage_vector(SPI_HandleTypeDef *SpiHandle);
+
+#ifdef	 __cplusplus
+}
+#endif
 
 #endif /* BSP_FSM01M1_EVAL_INC_FSM01M1_EVAL_DRIVER_H_ */

@@ -1,12 +1,21 @@
 /**
- ******************************************************************************
- * @file    adc120.h
- * @author  ST Power Application Lab Prague
- * @version V1.0.0
- * @date    Nov 18, 2021
- * @brief   header for ADC120 driver (8-channel 12-bit A/D converter)
- ******************************************************************************
- */
+  ******************************************************************************
+  * @file    adc120.h
+  * @author  ST Power Application Laboratory
+  * @version V1.0.0
+  * @brief   Provides functions for control of ADC120 component
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright (c) 2023 STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  ******************************************************************************
+  */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef BSP_COMPONENTS_ADC120_INC_ADC120_H_
@@ -19,10 +28,8 @@ extern "C" {
 /* Includes ------------------------------------------------------------------*/
 #include <stdint.h>
 #include "stm32f4xx_hal.h"
-#include <fsm01m1_eval_pin_map.h>
 
-
-/* Exported Constants --------------------------------------------------------*/
+/* Exported constants --------------------------------------------------------*/
 
 /* adc 12b data extraction mask */
 #define ADC120_DATA_MASK	(0x0FFF)
@@ -39,7 +46,7 @@ extern "C" {
 #define SPIx_TIMEOUT_MAX            ((uint32_t)0x1000)
 
 
-/* Exported Types  -----------------------------------------------------------*/
+/* Exported types ------------------------------------------------------------*/
 typedef struct
 {
   /**  Function pointer to Init */

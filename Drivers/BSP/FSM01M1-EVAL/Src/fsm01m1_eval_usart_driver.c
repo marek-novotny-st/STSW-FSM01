@@ -1,17 +1,29 @@
-/*
- * STEVAL-FSM01M1-USART_driver.c
- *
- *  Created on: 23. 11. 2022
- *      Author: marek novotny
- */
+/**
+  ******************************************************************************
+  * @file    fsm01m1_eval_usart_driver.c
+  * @author  ST Power Application Laboratory
+  * @version V1.0.0
+  * @brief   Provides functions for serial ST-LINK communication
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright (c) 2023 STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  ******************************************************************************
+  */
 
 /* Includes ------------------------------------------------------------------*/
-#include <fsm01m1_eval_usart_driver.h>
+#include "fsm01m1_eval_usart_driver.h"
 #include "stm32f4xx_hal_uart.h"
 #include "stdio.h"
 #include "string.h"
 
-/* Private define ------------------------------------------------------------*/
+/* Private constants ---------------------------------------------------------*/
 #define USART_COM_TIMEOUT 100
 
 /* Private variables ---------------------------------------------------------*/
@@ -20,8 +32,7 @@ UART_HandleTypeDef * p_vCOM = NULL;
 USART_MessageTypeDef * p_msg = NULL;
 char rx_buffer[USART_MAX_MSG_LEN];
 
-/* Private function prototypes -----------------------------------------------*/
-//
+/* Exported functions --------------------------------------------------------*/
 
 /**
  * @brief Configuration of virtual COM
@@ -77,7 +88,7 @@ void FSM01M1_USART_vCOM_AppendInt(int i, USART_MessageTypeDef * msg) {
  */
 void FSM01M1_USART_vCOM_AppendFloat(float f, USART_MessageTypeDef * msg) {
 	char fStr[USART_MAX_MSG_LEN];
-	int len = sprintf(fStr, "%f", f);
+	int len = sprintf(fStr, "%f", (double) f);
 
 	strncat(msg->data, fStr, len);
 }
@@ -119,9 +130,9 @@ HAL_StatusTypeDef FSM01M1_USART_vCOM_Write(USART_MessageTypeDef * msg) {
  * @retval HAL_StatusTypeDef
  */
 HAL_StatusTypeDef FSM01M1_USART_vCOM_WriteLine(USART_MessageTypeDef * msg) {
-	char msg_ln[USART_MAX_MSG_LEN + 1];
+	char msg_ln[USART_MAX_MSG_LEN + 2];
 	memcpy(msg_ln, msg->data, USART_MAX_MSG_LEN);
-	strncat(msg_ln, "\n", 1);
+	strncat(msg_ln, "\n", 2);
 
 	HAL_StatusTypeDef status = HAL_UART_Transmit(p_vCOM, (uint8_t *) msg_ln, USART_MAX_MSG_LEN, USART_COM_TIMEOUT);
 
@@ -139,9 +150,9 @@ HAL_StatusTypeDef FSM01M1_USART_vCOM_FlushWriteLine(USART_MessageTypeDef * msg) 
 		return HAL_BUSY;
 	}
 
-	char msg_ln[USART_MAX_MSG_LEN + 1];
+	char msg_ln[USART_MAX_MSG_LEN + 2];
 	memcpy(msg_ln, msg->data, USART_MAX_MSG_LEN);
-	strncat(msg_ln, "\n", 1);
+	strncat(msg_ln, "\n", 2);
 
 	HAL_StatusTypeDef status = HAL_UART_Transmit(p_vCOM, (uint8_t *) msg_ln, USART_MAX_MSG_LEN, USART_COM_TIMEOUT);
 	msg->Clear(msg);

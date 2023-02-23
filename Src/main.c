@@ -61,8 +61,6 @@ static void MX_USART2_UART_Init(void);
 static void MX_TIM4_Init(void);
 /* USER CODE BEGIN PFP */
 
-void SPI_test_transaction(void);
-
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -77,7 +75,6 @@ void SPI_test_transaction(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-  uint16_t adc_read = 0;
 
   /* USER CODE END 1 */
 
@@ -108,8 +105,8 @@ int main(void)
   HAL_GPIO_WritePin(SPI_NCS_GPIO_Port, SPI_NCS_Pin, GPIO_PIN_SET);
 
 
-  /* Dummy read to format ADC */
-  adc_read = FSM01M1_ADC120_read_blind(&hspi2);
+  /* Dummy read to initialize ADC */
+  FSM01M1_ADC120_read_blind(&hspi2);
 
   FSM01M1_initialization();
 
@@ -118,18 +115,9 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 
-  /* Static output configuration for test purposes */
-  /* Turn-OFF OUT1 & OUT2 */
-  FSM01M1_VCC1_OFF();
-  FSM01M1_VCC2_OFF();
-  FSM01M1_OUT1_CTRL_OFF();
-  FSM01M1_OUT2_CTRL_OFF();
-
-  /* Turn-ON OUT1 & OUT2 */
+  /* Turn-ON VCC1 & VCC2 */
   FSM01M1_VCC1_ON();
   FSM01M1_VCC2_ON();
-//  STEVAL_FSM01M1_OUT1_CTRL_ON();
-//  STEVAL_FSM01M1_OUT2_CTRL_ON();
 
   /* visual led test */
   FSM01M1_PULSE_PulseGen_TIM_Config(&htim4, TIM4, TIM_CHANNEL_3, 1, 65535, 25000);

@@ -1,28 +1,34 @@
 /**
- ******************************************************************************
- * @file    adc120.c
- * @author  ST Power Application Lab Prague
- * @version V1.0.0
- * @date    Nov 18, 2021
- * @brief   ADC120 driver (8-channel 12-bit A/D converter)
- ******************************************************************************
- */
+  ******************************************************************************
+  * @file    adc120.c
+  * @author  ST Power Application Laboratory
+  * @version V1.0.0
+  * @brief   Provides functions for control of ADC120 component
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright (c) 2023 STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  ******************************************************************************
+  */
 
 /* Includes ------------------------------------------------------------------*/
 #include "adc120.h"
-/* Private types -------------------------------------------------------------*/
-/* Private variables ---------------------------------------------------------*/
-
-/** Function pointer to error handler call back */
-static void (*pErrorHandlerCallback)(uint16_t);
-
-
-/* Private constants ---------------------------------------------------------*/
-
-/* Private macros ------------------------------------------------------------*/
 
 /* Private function prototypes -----------------------------------------------*/
 void ADC120_ErrorHandler(uint16_t error);
+
+/* Private variables ---------------------------------------------------------*/
+static uint8_t adc_spi_tx_buffer[2] = {0,0};
+static uint8_t adc_spi_rx_buffer[2] = {0,0};
+
+/** Function pointer to error handler call back */
+static void (*pErrorHandlerCallback)(uint16_t);
 
 static adc120Drv_t adc120Drv = {
 	ADC120_Init,                         /* void (*Init)(void*); */
@@ -30,13 +36,6 @@ static adc120Drv_t adc120Drv = {
 	ADC120_ErrorHandler,	             /* void (*ErrorHandler)(uint16_t); */
 	Adc120_ReadAdcChannel				 /* uint8_t (*ReadAdcChannel)(uint8_t) */
 };
-
-/* Private functions ---------------------------------------------------------*/
-/* Exported functions --------------------------------------------------------*/
-
-
-static uint8_t adc_spi_tx_buffer[2] = {0,0};
-static uint8_t adc_spi_rx_buffer[2] = {0,0};
 
 
 /******************************************************//**
@@ -143,9 +142,10 @@ uint16_t ADC120_channel_read(SPI_HandleTypeDef *SpiHandle, uint8_t adc_channel_i
  * @param ADC120 channel to read
  * @retval specific ADC120 channel value
  **********************************************************/
-//uint8_t Adc120_ReadAdcChannel(uint_8t channel_id)
-//{
-//}
+uint8_t Adc120_ReadAdcChannel(uint8_t channel_id)
+{
+	return 0;
+}
 
 /******************************************************//**
  * @brief Return ADC120 handle (pointer to the ADC120 driver structure)
