@@ -1,18 +1,29 @@
-/*
- * STEVAL-FSM01M1_driver.c
- *
- *  Created on: Sep 20, 2021
- *      Author: vojtech elias
- */
+/**
+  ******************************************************************************
+  * @file    fsm01m1_eval_driver.c
+  * @author  ST Power Application Laboratory
+  * @version V1.0.0
+  * @brief   Provides functions for programmable board control and measurement
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright (c) 2023 STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  ******************************************************************************
+  */
 
-#include <fsm01m1_eval_driver.h>
+/* Includes ------------------------------------------------------------------*/
+#include "fsm01m1_eval_driver.h"
 
+/* Private variables ---------------------------------------------------------*/
 extern SPI_HandleTypeDef hspi2;
 
-static uint8_t adc_spi_tx_buffer[2] = {0,0};
-static uint8_t adc_spi_rx_buffer[2] = {0,0};
-
-float VCC_scan  = 0;
+float VCC_scan = 0;
 float VCC1_scan = 0;
 float VCC2_scan = 0;
 
@@ -30,6 +41,7 @@ FSM_OperationMode_TypeDef fsm_operation_mode = FSM_MODE_DEFAULT;
  * @}
  */
 
+/* Exported functions --------------------------------------------------------*/
 void FSM01M1_TimeLoop_Default() {
 	uint16_t i,j;
 
@@ -37,7 +49,6 @@ void FSM01M1_TimeLoop_Default() {
 		for(j = 0; j<0xF; j++);
 	}
 }
-
 
 /* 350ms */
 void FSM01M1_TimeLoop_Short() {
@@ -54,12 +65,6 @@ void FSM01M1_TimeLoop_Short_div2() {
 	for(i = 0; i<0x3FFF; i++) {
 		for(j = 0; j<0xF; j++);
 	}
-}
-
-void TimeLoop_test_pulse() {
-	uint16_t i;
-
-	for(i = 0; i<0x3FFF; i++);
 }
 
 /**
@@ -122,8 +127,9 @@ void FSM01M1_initialization() {
 	/* Test pulses static setup */
 	FSM01M1_TP1_OFF();
 	FSM01M1_TP2_OFF();
-//	STEVAL_FSM01M1_TP1_ON();
-//	STEVAL_FSM01M1_TP2_ON();
+
+	FSM01M1_CUTOFF1_CTRL_OFF();
+	FSM01M1_CUTOFF2_CTRL_OFF();
 
 	/* Initialization sequence starting - NUCLEO onboard LED LD2 ON */
 	FSM01M1_LD2_USER_OFF();
@@ -396,11 +402,10 @@ uint16_t FSM01M1_SPI_frame_assembler(uint8_t adc_control_register) {
 	return adc_spi_tx_frame;
 }
 
-uint16_t FSM01M1_SPI_ADC120_channel_read(SPI_HandleTypeDef *SpiHandle, uint8_t adc_channel_id) {
+uint16_t FSM01M1_SPI_ADC120_channel_read(SPI_HandleTypeDef *SpiHandle,
+		uint8_t adc_channel_id) {
 
-	HAL_StatusTypeDef status = HAL_OK;
 	uint16_t adc_readout = 0;
-
 
 	adc_readout = ADC120_channel_read(SpiHandle, adc_channel_id);
 
