@@ -107,6 +107,7 @@ void Error_Handler(void);
 #define OUT1_CTRL_GPIO_Port GPIOB
 #define VCC2_CTRL_Pin GPIO_PIN_9
 #define VCC2_CTRL_GPIO_Port GPIOB
+
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */
