@@ -1,28 +1,36 @@
-/*
- * STEVAL-FSM01M1-diagnostic_driver.c
- *
- *  Created on: 28. 11. 2022
- *      Author: marek novotny
- */
+/**
+  ******************************************************************************
+  * @file    fsm01m1_eval_diagnostic_driver.c
+  * @author  ST Power Application Laboratory
+  * @version V1.0.0
+  * @brief   Provides functions for interactive board control and measurement
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright (c) 2023 STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  ******************************************************************************
+  */
 
 /* Includes ------------------------------------------------------------------*/
-#include <fsm01m1_eval_diagnostic_driver.h>
-#include <fsm01m1_eval_driver.h>
-#include <fsm01m1_eval_usart_driver.h>
+#include "fsm01m1_eval_diagnostic_driver.h"
+#include "fsm01m1_eval_driver.h"
+#include "fsm01m1_eval_usart_driver.h"
+#include "strtok_r.h"
 #include "string.h"
 
-/* Private types -------------------------------------------------------------*/
+/* Private typedef -----------------------------------------------------------*/
 typedef enum USART_Format_t {
 	numerical,
 	logical
 } USART_FormatTypeDef;
 
 /* Private variables ---------------------------------------------------------*/
-float VCC_ADC;
-float VCC1_ADC;
-float VCC2_ADC;
-float OUT1_ADC;
-float OUT2_ADC;
 
 /* buffer for command tokenization */
 char * token_ctx;
@@ -62,12 +70,41 @@ DIAG_ActionTypeDef actions[7] = {
 };
 
 /* Private function prototypes -----------------------------------------------*/
+void FSM01M1_DIAG_splash_msg();
 void FSM01M1_DIAG_read(DIAG_DeviceTypeDef dev, USART_FormatTypeDef fmt);
 void FSM01M1_DIAG_reset_devices();
 void FSM01M1_DIAG_switch(DIAG_DeviceTypeDef dev, DIAG_ActionTypeDef act);
 void FSM01M1_DIAG_resolve(char * cmd, DIAG_DeviceTypeDef target);
 void FSM01M1_DIAG_levels();
 void FSM01M1_DIAG_states();
+
+/* Exported functions --------------------------------------------------------*/
+
+/**
+ * @brief Runs a diagnostic IO command line application
+ * @param huart: uart handle
+ * @retval None
+ */
+void FSM01M1_DIAG_IO_Loop(UART_HandleTypeDef * huart) {
+	FSM01M1_USART_vCOM_Config(huart);
+	USART_MessageTypeDef cmd = FSM01M1_USART_vCOM_CreateMessage();
+
+	FSM01M1_DIAG_splash_msg();
+	while(1) {
+		if (cmd.flag == ready) {
+			FSM01M1_DIAG_resolve(cmd.data, all);
+			cmd.Clear(&cmd);
+			cmd.flag = idle;
+
+			FSM01M1_USART_vCOM_WriteChar('\n');
+		}
+		if (cmd.flag == idle) {
+			FSM01M1_USART_vCOM_ReadLine(&cmd);
+		}
+	}
+}
+
+/* Private functions ---------------------------------------------------------*/
 
 /**
  * @brief Prints starting message
@@ -198,30 +235,6 @@ void FSM01M1_DIAG_list_actions() {
 }
 
 /**
- * @brief Runs a diagnostic IO command line application
- * @param huart: uart handle
- * @retval None
- */
-void FSM01M1_DIAG_IO_Loop(UART_HandleTypeDef * huart) {
-	FSM01M1_USART_vCOM_Config(huart);
-	USART_MessageTypeDef cmd = FSM01M1_USART_vCOM_CreateMessage();
-
-	FSM01M1_DIAG_splash_msg();
-	while(1) {
-		if (cmd.flag == ready) {
-			FSM01M1_DIAG_resolve(cmd.data, all);
-			cmd.Clear(&cmd);
-			cmd.flag = idle;
-
-			FSM01M1_USART_vCOM_WriteChar('\n');
-		}
-		if (cmd.flag == idle) {
-			FSM01M1_USART_vCOM_ReadLine(&cmd);
-		}
-	}
-}
-
-/**
  * @brief Provides command resolution services
  * @param cmd: command
  * @param target: device
@@ -229,7 +242,7 @@ void FSM01M1_DIAG_IO_Loop(UART_HandleTypeDef * huart) {
  */
 void FSM01M1_DIAG_resolve(char * cmd, DIAG_DeviceTypeDef target) {
 	if (cmd[0] == '\r' || cmd[0] == '\n') cmd = cmd + 1;
-	char * arg = strtok_r(cmd, " ", &token_ctx);
+	char * arg = (char *) strtok_r(cmd, " ", &token_ctx);
 	arg[strcspn(arg, "\r\n")] = '\0';
 
 	if (arg[0] == '\0') return;
@@ -442,7 +455,7 @@ void FSM01M1_DIAG_read(DIAG_DeviceTypeDef dev, USART_FormatTypeDef fmt) {
 	}
 
 	if (fmt == numerical) {
-		if (reading != -1.0) msg.AppendFloat(reading, &msg);
+		if (reading != -1.0f) msg.AppendFloat(reading, &msg);
 		else if (logic != -1) msg.AppendInt(logic, &msg);
 	}
 	else if (fmt == logical) {
@@ -484,157 +497,3 @@ void FSM01M1_DIAG_states() {
 		}
 	}
 }
-
-/**
- * @brief Compares expected voltage levels with real ones
- * @params expected switch states of devices
- * @retval None
- */
-void FSM01M1_DIAG_check_expected_voltages(bool * vcc, bool * vcc1, bool * out1, bool * vcc2, bool * out2) {
-	FSM01M1_OUT1_CTRL_OFF();
-	FSM01M1_VCC1_OFF();
-	FSM01M1_OUT2_CTRL_OFF();
-	FSM01M1_VCC2_OFF();
-	HAL_Delay(100);
-
-	/* Switch */
-	if (vcc1) FSM01M1_VCC1_ON();
-	if (vcc2) FSM01M1_VCC2_ON();
-	if (out1) FSM01M1_OUT1_CTRL_ON();
-	if (out2) FSM01M1_OUT2_CTRL_ON();
-	HAL_Delay(100);
-
-	FSM01M1_OUT1_CTRL_ON();
-	HAL_Delay(100);
-	/* ADC measurements */
-	VCC1_ADC = FSM01M1_ADC120_read_single_node(&hspi2, VCC_ADC_CHANNEL_ID);
-//	VCC1_ADC = STEVAL_FSM01M1_scan_voltage_point(&hspi2, VCC_ADC_CHANNEL_ID);
-//	VCC_ADC = STEVAL_FSM01M1_scan_voltage_point(&hspi2, OUT1_ADC_CHANNEL_ID);
-	VCC_ADC = FSM01M1_ADC120_read_single_node(&hspi2, OUT1_ADC_CHANNEL_ID);
-	OUT1_ADC = FSM01M1_ADC120_read_single_node(&hspi2, VCC2_ADC_CHANNEL_ID);
-	VCC2_ADC = FSM01M1_ADC120_read_single_node(&hspi2, OUT2_ADC_CHANNEL_ID);
-	OUT2_ADC = FSM01M1_ADC120_read_single_node(&hspi2, VCC1_ADC_CHANNEL_ID);
-
-	/* Criteria */
-
-	// Initialize result by checking Vcc
-	bool result = VCC_ADC >= FSM01M1_NOMINAL_VOLTAGE_THRESHOLD;
-	(* vcc) = result;
-
-
-	if (vcc1) {
-		bool check = VCC1_ADC >= FSM01M1_NOMINAL_VOLTAGE_THRESHOLD;
-		result = result && check;
-		(* vcc1) = check;
-	}
-	else {
-		bool check = VCC1_ADC <= FSM01M1_ZERO_VOLTAGE_THRESHOLD;
-		result = result && check;
-		(* vcc1) = check;
-	}
-	if (out1) {
-		bool check = OUT1_ADC >= FSM01M1_NOMINAL_VOLTAGE_THRESHOLD;
-		result = result && check;
-		(* out1) = check;
-	}
-	else {
-		bool check = OUT1_ADC <= FSM01M1_ZERO_VOLTAGE_THRESHOLD;
-		result = result && check;
-		(* out1) = check;
-	}
-	if (vcc2) {
-		bool check = VCC2_ADC >= FSM01M1_NOMINAL_VOLTAGE_THRESHOLD;
-		result = result && check;
-		(* vcc2) = check;
-	}
-	else {
-		bool check = VCC2_ADC <= FSM01M1_ZERO_VOLTAGE_THRESHOLD;
-		result = result && check;
-		(* vcc2) = check;
-	}
-	if (out2) {
-		bool check = OUT2_ADC >= FSM01M1_NOMINAL_VOLTAGE_THRESHOLD;
-		result = result && check;
-		(* out2) = check;
-	}
-	else {
-		bool check = OUT2_ADC <= FSM01M1_ZERO_VOLTAGE_THRESHOLD;
-		result = result && check;
-		(* out2) = check;
-	}
-}
-
-/**
- * @brief Provides testing service for expected voltage levels
- * @params expected switch states of devices
- * @retval None
- */
-void FSM01M1_DIAG_expected_voltages_test(bool vcc, bool vcc1, bool out1, bool vcc2, bool out2) {
-	FSM01M1_DIAG_check_expected_voltages(&vcc, &vcc1, &out1, &vcc2, &out2);
-
-	USART_MessageTypeDef msg = FSM01M1_USART_vCOM_CreateMessage();
-
-	bool result = vcc && vcc1 && out1 && vcc2 && out2;
-
-	// Test VCC
-	if (vcc) {
-		msg.AppendStr("VCC PASSED ", &msg);
-		msg.AppendFloat(VCC_ADC, &msg);
-	}
-	else {
-		msg.AppendStr("VCC FAILED ", &msg);
-		msg.AppendFloat(VCC_ADC, &msg);
-	}
-	FSM01M1_USART_vCOM_FlushWriteLine(&msg);
-
-	// Test VCC1
-	if (vcc1) {
-		msg.AppendStr("VCC1 PASSED ", &msg);
-		msg.AppendFloat(VCC1_ADC, &msg);
-	}
-	else {
-		msg.AppendStr("VCC1 FAILED ", &msg);
-		msg.AppendFloat(VCC1_ADC, &msg);
-	}
-	FSM01M1_USART_vCOM_FlushWriteLine(&msg);
-
-	// Test OUT1
-	if (out1) {
-		msg.AppendStr("OUT1 PASSED ", &msg);
-		msg.AppendFloat(OUT1_ADC, &msg);
-	}
-	else {
-		msg.AppendStr("OUT1 FAILED ", &msg);
-		msg.AppendFloat(OUT1_ADC, &msg);
-	}
-	FSM01M1_USART_vCOM_FlushWriteLine(&msg);
-
-	// Test VCC2
-	if (vcc2) {
-		msg.AppendStr("VCC2 PASSED ", &msg);
-		msg.AppendFloat(VCC2_ADC, &msg);
-	}
-	else {
-		msg.AppendStr("VCC2 FAILED ", &msg);
-		msg.AppendFloat(VCC2_ADC, &msg);
-	}
-	FSM01M1_USART_vCOM_FlushWriteLine(&msg);
-
-	// Test OUT2
-	if (out2) {
-		msg.AppendStr("OUT2 PASSED ", &msg);
-		msg.AppendFloat(OUT2_ADC, &msg);
-	}
-	else {
-		msg.AppendStr("OUT2 FAILED ", &msg);
-		msg.AppendFloat(OUT2_ADC, &msg);
-	}
-	FSM01M1_USART_vCOM_FlushWriteLine(&msg);
-
-	if (!result) {
-		FSM01M1_user_LED_red_ON();
-		while(1);
-	}
-}
-
-

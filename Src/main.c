@@ -57,8 +57,6 @@ static void MX_SPI2_Init(void);
 static void MX_USART2_UART_Init(void);
 /* USER CODE BEGIN PFP */
 
-void SPI_test_transaction(void);
-
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -73,7 +71,6 @@ void SPI_test_transaction(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-	uint16_t adc_read = 0;
 
   /* USER CODE END 1 */
 
@@ -103,8 +100,8 @@ int main(void)
   HAL_GPIO_WritePin(SPI_NCS_GPIO_Port, SPI_NCS_Pin, GPIO_PIN_SET);
 
 
-  /* Dummy read to format ADC */
-  adc_read = FSM01M1_ADC120_read_blind(&hspi2);
+  /* Dummy read to initialize ADC */
+  FSM01M1_ADC120_read_blind(&hspi2);
 
   FSM01M1_initialization();
 
@@ -113,38 +110,12 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 
-  /* Implicit test scenarios */
-  //STEVAL_FSM01M1_TEST_CASE_overcurrent_cutoff_test();
-  //STEVAL_FSM01M1_TEST_CASE_simultaneous_demagnetization();
-  //STEVAL_FSM01M1_TEST_CASE_SFTY_OFF();
-  //STEVAL_FSM01M1_TEST_CASE_loss_off_GND();
-  //STEVAL_FSM01M1_TEST_CASE_EMC_test_routine();
-  //STEVAL_FSM01M1_TEST_CASE_VCCx_test_pulse_routine();
-
-  /* Static output configuration for test purposes */
-  /* Turn-OFF OUT1 & OUT2 */
-  FSM01M1_VCC1_OFF();
-  FSM01M1_VCC2_OFF();
-  FSM01M1_OUT1_CTRL_OFF();
-  FSM01M1_OUT2_CTRL_OFF();
-
-  /* Turn-ON OUT1 & OUT2 */
+  /* Turn-ON VCC1 & VCC2 */
   FSM01M1_VCC1_ON();
   FSM01M1_VCC2_ON();
-//  STEVAL_FSM01M1_OUT1_CTRL_ON();
-//  STEVAL_FSM01M1_OUT2_CTRL_ON();
 
+  /* Main loop */
   FSM01M1_DIAG_IO_Loop(&huart2);
-
-  while(1) {
-
-	  /* USER_LED_GREEN test */
-	  FSM01M1_user_LED_green_ON();
-	  FSM01M1_TimeLoop_Short();
-
-	  FSM01M1_user_LED_green_OFF();
-	  FSM01M1_TimeLoop_Short();
-  }
 
     /* USER CODE END WHILE */
 
