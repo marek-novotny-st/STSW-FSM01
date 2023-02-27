@@ -273,6 +273,7 @@ void FSM01M1_DIAG_resolve(char * cmd, DIAG_DeviceTypeDef target) {
 	else if (strcmp(arg, "help") == 0) FSM01M1_DIAG_help();
 	else if (strcmp(arg, "devices") == 0) FSM01M1_DIAG_list_devices();
 	else if (strcmp(arg, "actions") == 0) FSM01M1_DIAG_list_actions();
+	else if (strcmp(arg, "clear") == 0) FSM01M1_USART_vCOM_Clear();
 	else {
 		USART_MessageTypeDef msg = FSM01M1_USART_vCOM_CreateMessage();
 		msg.AppendStr("Invalid command, no actions performed", &msg);
