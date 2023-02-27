@@ -539,6 +539,16 @@
               <FileType>1</FileType>
               <FilePath>..\Drivers\BSP\FSM01M1-EVAL\Src\fsm01m1_eval_diagnostic_driver.c</FilePath>
             </File>
+            <File>
+              <FileName>fsm01m1_eval_pulse_driver.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\BSP\FSM01M1-EVAL\Src\fsm01m1_eval_pulse_driver.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsm01m1_eval_tests.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\BSP\FSM01M1-EVAL\Src\fsm01m1_eval_tests.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

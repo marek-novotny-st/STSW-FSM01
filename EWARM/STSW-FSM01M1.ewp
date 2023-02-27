@@ -1127,6 +1127,12 @@
                     <name>$PROJ_DIR$\..\Drivers\BSP\FSM01M1-EVAL\Src\fsm01m1_eval_driver.c</name>
                 </file>
                 <file>
+                    <name>$PROJ_DIR$\..\Drivers\BSP\FSM01M1-EVAL\Src\fsm01m1_eval_pulse_driver.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\Drivers\BSP\FSM01M1-EVAL\Src\fsm01m1_eval_tests.c</name>
+                </file>
+                <file>
                     <name>$PROJ_DIR$\..\Drivers\BSP\FSM01M1-EVAL\Src\fsm01m1_eval_usart_driver.c</name>
                 </file>
             </group>
