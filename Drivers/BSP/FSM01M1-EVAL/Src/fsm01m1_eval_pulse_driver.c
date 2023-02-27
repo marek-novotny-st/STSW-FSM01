@@ -23,7 +23,7 @@ void FSM01M1_PULSE_DSC_Reset(TIM_HandleTypeDef * htim);
  * @param Pulse_Ticks: duration of a pulse in ticks
  * @retval None
  */
-void FSM01M1_PULSE_PulseGen_TIM_Config(TIM_HandleTypeDef * htim, TIM_TypeDef * TIM, uint32_t Channel, uint32_t Time_Base, uint32_t Period_Ticks, uint32_t Pulse_Ticks) {
+HAL_StatusTypeDef FSM01M1_PULSE_PulseGen_TIM_Config(TIM_HandleTypeDef * htim, TIM_TypeDef * TIM, uint32_t Channel, uint32_t Time_Base, uint32_t Period_Ticks, uint32_t Pulse_Ticks) {
 	/* Clock section */
 	uint32_t PCLK1Freq = HAL_RCC_GetPCLK1Freq();
 	uint32_t PCLK2Freq = HAL_RCC_GetPCLK2Freq();
