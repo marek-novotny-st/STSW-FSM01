@@ -93,7 +93,7 @@ void FSM01M1_DIAG_IO_Loop(UART_HandleTypeDef * huart) {
 	while(1) {
 		if (cmd.flag == ready) {
 			FSM01M1_DIAG_resolve(cmd.data, all);
-			cmd.Clear(&cmd);
+			cmd.Reset(&cmd);
 			cmd.flag = idle;
 
 			FSM01M1_USART_vCOM_WriteChar('\n');
