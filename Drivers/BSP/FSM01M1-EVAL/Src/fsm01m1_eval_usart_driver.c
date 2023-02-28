@@ -61,7 +61,7 @@ USART_MessageTypeDef FSM01M1_USART_vCOM_CreateMessage() {
 	USART_MessageTypeDef msg = {{0}, USART_MAX_MSG_LEN, idle, FSM01M1_USART_vCOM_AppendInt,
 			FSM01M1_USART_vCOM_AppendFloat,
 			FSM01M1_USART_vCOM_AppendStr,
-			FSM01M1_USART_vCOM_Truncate
+			FSM01M1_USART_vCOM_Reset
 	};
 
 	return msg;
@@ -109,7 +109,7 @@ void FSM01M1_USART_vCOM_AppendStr(char * str, USART_MessageTypeDef * msg) {
  * @param msg: message
  * @retval None
  */
-void FSM01M1_USART_vCOM_Truncate(USART_MessageTypeDef * msg) {
+void FSM01M1_USART_vCOM_Reset(USART_MessageTypeDef * msg) {
 	memset(msg->data, 0, USART_MAX_MSG_LEN);
 }
 
@@ -167,7 +167,7 @@ HAL_StatusTypeDef FSM01M1_USART_vCOM_FlushWriteLine(USART_MessageTypeDef * msg) 
 	strncat(msg_ln, "\n", 2);
 
 	HAL_StatusTypeDef status = HAL_UART_Transmit(p_vCOM, (uint8_t *) msg_ln, USART_MAX_MSG_LEN, USART_COM_TIMEOUT);
-	msg->Clear(msg);
+	msg->Reset(msg);
 
 	return status;
 }
