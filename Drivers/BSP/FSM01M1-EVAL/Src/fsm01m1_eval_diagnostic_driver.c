@@ -93,7 +93,7 @@ void FSM01M1_DIAG_IO_Loop(UART_HandleTypeDef * huart) {
 	while(1) {
 		if (cmd.flag == ready) {
 			FSM01M1_DIAG_resolve(cmd.data, all);
-			cmd.Clear(&cmd);
+			cmd.Reset(&cmd);
 			cmd.flag = idle;
 
 			FSM01M1_USART_vCOM_WriteChar('\n');
@@ -273,6 +273,7 @@ void FSM01M1_DIAG_resolve(char * cmd, DIAG_DeviceTypeDef target) {
 	else if (strcmp(arg, "help") == 0) FSM01M1_DIAG_help();
 	else if (strcmp(arg, "devices") == 0) FSM01M1_DIAG_list_devices();
 	else if (strcmp(arg, "actions") == 0) FSM01M1_DIAG_list_actions();
+	else if (strcmp(arg, "clear") == 0) FSM01M1_USART_vCOM_Clear();
 	else {
 		USART_MessageTypeDef msg = FSM01M1_USART_vCOM_CreateMessage();
 		msg.AppendStr("Invalid command, no actions performed", &msg);

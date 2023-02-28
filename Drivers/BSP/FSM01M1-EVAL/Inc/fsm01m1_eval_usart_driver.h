@@ -49,7 +49,7 @@ typedef struct USART_Message_t {
 	void (* AppendInt)(int i, struct USART_Message_t * msg);
 	void (* AppendFloat)(float f, struct USART_Message_t * msg);
 	void (* AppendStr)(char * str, struct USART_Message_t * msg);
-	void (* Clear)(struct USART_Message_t * msg);
+	void (* Reset)(struct USART_Message_t * msg);
 } USART_MessageTypeDef;
 
 /* Exported functions --------------------------------------------------------*/
@@ -59,7 +59,8 @@ void FSM01M1_USART_vCOM_AppendInt(int i, USART_MessageTypeDef * msg);
 void FSM01M1_USART_vCOM_AppendFloat(float f, USART_MessageTypeDef * msg);
 void FSM01M1_USART_vCOM_AppendDouble(double d, USART_MessageTypeDef * m);
 void FSM01M1_USART_vCOM_AppendStr(char * str, USART_MessageTypeDef * msg);
-void FSM01M1_USART_vCOM_Clear(USART_MessageTypeDef * msg);
+void FSM01M1_USART_vCOM_Reset(USART_MessageTypeDef * msg);
+HAL_StatusTypeDef FSM01M1_USART_vCOM_Clear();
 HAL_StatusTypeDef FSM01M1_USART_vCOM_Write(USART_MessageTypeDef * msg);
 HAL_StatusTypeDef FSM01M1_USART_vCOM_FlushWrite(USART_MessageTypeDef * msg);
 HAL_StatusTypeDef FSM01M1_USART_vCOM_FlushWriteLine(USART_MessageTypeDef * msg);
