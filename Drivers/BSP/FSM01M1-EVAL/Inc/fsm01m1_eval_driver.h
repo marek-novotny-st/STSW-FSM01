@@ -115,6 +115,7 @@ extern float OUT2_scan;
 void FSM01M1_TimeLoop_Default(void);
 void FSM01M1_TimeLoop_Short(void);
 void FSM01M1_TimeLoop_Short_div2(void);
+void FSM01M1_system_deactivation(void);
 void FSM01M1_initialization(void);
 
 /* LEDs */

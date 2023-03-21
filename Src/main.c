@@ -45,6 +45,7 @@
 /* Private variables ---------------------------------------------------------*/
 SPI_HandleTypeDef hspi2;
 
+TIM_HandleTypeDef htim1;
 TIM_HandleTypeDef htim4;
 
 UART_HandleTypeDef huart2;
@@ -58,6 +59,7 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_SPI2_Init(void);
 static void MX_USART2_UART_Init(void);
+static void MX_TIM1_Init(void);
 static void MX_TIM4_Init(void);
 /* USER CODE BEGIN PFP */
 
@@ -98,6 +100,7 @@ int main(void)
   MX_GPIO_Init();
   MX_SPI2_Init();
   MX_USART2_UART_Init();
+  MX_TIM1_Init();
   MX_TIM4_Init();
   /* USER CODE BEGIN 2 */
 
@@ -170,7 +173,10 @@ int main(void)
   HAL_Delay(500);
   FSM01M1_PULSE_PulseGen_TIM_Stop_IT(&htim4, TIM_CHANNEL_3);
 
+  /* Main loop */
+  HAL_TIM_Base_Start_IT(&htim1);
   FSM01M1_DIAG_IO_Loop(&huart2);
+  while (1) {};
 
   while(1) {
 
@@ -445,13 +451,17 @@ static void MX_GPIO_Init(void)
   HAL_NVIC_SetPriority(EXTI9_5_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
 
-  HAL_NVIC_SetPriority(EXTI15_10_IRQn, 0, 0);
+  HAL_NVIC_SetPriority(EXTI15_10_IRQn, 1, 0);
   HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
 
 }
 
 /* USER CODE BEGIN 4 */
-
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
+	if (htim->Instance == TIM1) {
+		HAL_GPIO_TogglePin(LD2_USER_GPIO_Port, LD2_USER_Pin);
+	}
+}
 /* USER CODE END 4 */
 
 /**
