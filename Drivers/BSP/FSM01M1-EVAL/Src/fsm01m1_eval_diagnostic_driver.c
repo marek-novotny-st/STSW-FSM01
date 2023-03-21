@@ -211,9 +211,6 @@ void FSM01M1_DIAG_list_actions() {
 				msg.AppendStr("off\n", &msg);
 				msg.AppendStr("off [global]\n", &msg);
 				break;
-			case read:
-				msg.AppendStr("read\n", &msg);
-				break;
 			case state:
 				msg.AppendStr("state\n", &msg);
 				break;
@@ -265,7 +262,6 @@ void FSM01M1_DIAG_resolve(char * cmd, DIAG_DeviceTypeDef target) {
 	else if (strcmp(arg, "in2") == 0) FSM01M1_DIAG_resolve(NULL, in2);
 	else if (strcmp(arg, "on") == 0) FSM01M1_DIAG_switch(target, on);
 	else if (strcmp(arg, "off") == 0) FSM01M1_DIAG_switch(target, off);
-	else if (strcmp(arg, "read") == 0) FSM01M1_DIAG_read(target, numerical);
 	else if (strcmp(arg, "state") == 0) FSM01M1_DIAG_read(target, logical);
 	else if (strcmp(arg, "level") == 0) FSM01M1_DIAG_read(target, numerical);
 	else if (strcmp(arg, "levels") == 0) FSM01M1_DIAG_levels();

@@ -42,7 +42,7 @@ FSM_OperationMode_TypeDef fsm_operation_mode = FSM_MODE_DEFAULT;
  */
 
 /* Private functions ---------------------------------------------------------*/
-void TimeLoop_test_pulse() {
+void FSM01M1_TimeLoop_test_pulse() {
 	uint16_t i;
 
 	for(i = 0; i<0x3FFF; i++);
@@ -75,17 +75,42 @@ void FSM01M1_TimeLoop_Short_div2() {
 }
 
 /**
+ * @brief Resets board controls to off state
+ * @retval None
+ */
+
+void FSM01M1_system_deactivation() {
+
+	FSM01M1_VCC1_DSC_OFF();
+	FSM01M1_VCC2_DSC_OFF();
+	FSM01M1_OUT1_DSC_OFF();
+	FSM01M1_OUT2_DSC_OFF();
+	FSM01M1_CUTOFF1_CTRL_OFF();
+	FSM01M1_CUTOFF2_CTRL_OFF();
+	FSM01M1_OUT1_CTRL_OFF();
+	FSM01M1_OUT2_CTRL_OFF();
+	FSM01M1_VCC1_OFF();
+	FSM01M1_VCC2_OFF();
+
+	FSM01M1_TP1_OFF();
+	FSM01M1_TP2_OFF();
+}
+
+/**
  * @brief Initial setup testing procedure
  * @retval None
  */
 void FSM01M1_initialization() {
 
+	/* System deactivation */
+	FSM01M1_system_deactivation();
 
 	fsm_operation_mode = FSM_MODE_RESET;
 
 
-	/* Initialization sequence starting - NUCLEO onboard LED LD2 ON */
+	/* Initialization sequence starting */
 	FSM01M1_LD2_USER_ON();
+	FSM01M1_TimeLoop_Short();
 
 	/* USER_LED test */
 	FSM01M1_user_LED_green_ON();
@@ -100,46 +125,65 @@ void FSM01M1_initialization() {
 	FSM01M1_user_LED_green_OFF();
 	FSM01M1_TimeLoop_Short();
 
+	/* Verify system passive */
+	FSM01M1_scan_voltage_vector(&hspi2);
+	if (VCC1_scan > FSM01M1_ZERO_VOLTAGE_THRESHOLD ||
+			VCC2_scan > FSM01M1_ZERO_VOLTAGE_THRESHOLD) {
+		FSM01M1_user_LED_red_ON();
+	}
+
+
+	/* ***** CHANNEL 1 FUNCTION TEST ***** */
+
 	/* VCC1 control test */
 	FSM01M1_VCC1_ON();
-	FSM01M1_VCC1_DSC_ON();
 	FSM01M1_TimeLoop_Short();
-	FSM01M1_VCC1_DSC_OFF();
+	FSM01M1_scan_voltage_vector(&hspi2);
+	if (VCC1_scan < FSM01M1_NOMINAL_VOLTAGE_THRESHOLD ||
+			VCC2_scan > FSM01M1_ZERO_VOLTAGE_THRESHOLD) {
+		FSM01M1_user_LED_red_ON();
+	}
 
 	/* OUT1 control test */
 	FSM01M1_OUT1_CTRL_ON();
-	FSM01M1_OUT1_DSC_ON();
 	FSM01M1_TimeLoop_Short();
-	FSM01M1_OUT1_DSC_OFF();
+	FSM01M1_scan_voltage_vector(&hspi2);
+	if (OUT1_scan < FSM01M1_NOMINAL_VOLTAGE_THRESHOLD ||
+			VCC2_scan > FSM01M1_ZERO_VOLTAGE_THRESHOLD) {
+		FSM01M1_user_LED_red_ON();
+	}
+
+	/* ***** CHANNEL 2 FUNCTION TEST ***** */
 
 	/* VCC2 control test */
 	FSM01M1_VCC2_ON();
-	FSM01M1_VCC2_DSC_ON();
 	FSM01M1_TimeLoop_Short();
-	FSM01M1_VCC2_DSC_OFF();
+
+	FSM01M1_scan_voltage_vector(&hspi2);
+	if (VCC1_scan < FSM01M1_NOMINAL_VOLTAGE_THRESHOLD ||
+			VCC2_scan < FSM01M1_NOMINAL_VOLTAGE_THRESHOLD) {
+		FSM01M1_user_LED_red_ON();
+	}
 
 	/* OUT2 control test */
 	FSM01M1_OUT2_CTRL_ON();
-	FSM01M1_OUT2_DSC_ON();
 	FSM01M1_TimeLoop_Short();
-	FSM01M1_OUT2_DSC_OFF();
-
-
-	FSM01M1_OUT1_CTRL_OFF();
+	FSM01M1_scan_voltage_vector(&hspi2);
+	if (OUT1_scan < FSM01M1_NOMINAL_VOLTAGE_THRESHOLD ||
+			OUT2_scan < FSM01M1_NOMINAL_VOLTAGE_THRESHOLD) {
+		FSM01M1_user_LED_red_ON();
+	}
 	FSM01M1_OUT2_CTRL_OFF();
+	FSM01M1_TimeLoop_Short();
 
-	FSM01M1_VCC1_OFF();
-	FSM01M1_VCC2_OFF();
+	/* Initialization sequence ending */
 
-	/* Test pulses static setup */
-	FSM01M1_TP1_OFF();
-	FSM01M1_TP2_OFF();
+	/* Deactivate output stage */
+	FSM01M1_system_deactivation();
 
-	FSM01M1_CUTOFF1_CTRL_OFF();
-	FSM01M1_CUTOFF2_CTRL_OFF();
-
-	/* Initialization sequence starting - NUCLEO onboard LED LD2 ON */
+	/* Deactivate LEDs */
 	FSM01M1_LD2_USER_OFF();
+	FSM01M1_user_LED_green_OFF();
 }
 
 /**
@@ -528,6 +572,14 @@ void FSM01M1_B1_USER_activation_callback() {
 			FSM01M1_OUT1_CTRL_OFF();
 			FSM01M1_OUT2_CTRL_OFF();
 			fsm_operation_mode = FSM_MODE_OUT1_OUT2_OFF;
+
+			FSM01M1_scan_voltage_vector(&hspi2);
+			if (OUT1_scan > FSM01M1_ZERO_VOLTAGE_THRESHOLD ||
+					OUT2_scan > FSM01M1_ZERO_VOLTAGE_THRESHOLD) {
+				FSM01M1_user_LED_red_ON();
+				while(1);
+			}
+
 			break;
 		}
 		case (FSM_MODE_DEFAULT):
@@ -537,51 +589,63 @@ void FSM01M1_B1_USER_activation_callback() {
 			FSM01M1_OUT1_CTRL_ON();
 			FSM01M1_OUT2_CTRL_ON();
 			fsm_operation_mode = FSM_MODE_OUT1_OUT2_ON;
+
+			FSM01M1_scan_voltage_vector(&hspi2);
+			if (OUT1_scan < FSM01M1_NOMINAL_VOLTAGE_THRESHOLD ||
+					OUT2_scan < FSM01M1_NOMINAL_VOLTAGE_THRESHOLD) {
+				FSM01M1_user_LED_red_ON();
+				while(1);
+			}
 		}
 		default: break;
 	}
 	FSM01M1_LD2_USER_OFF();
+
+	HAL_Delay(300);
+	__HAL_GPIO_EXTI_CLEAR_IT(B1_USER_Pin);
+	HAL_NVIC_ClearPendingIRQ(B1_USER_EXTI_IRQn);
+
 	return;
 }
 
-void FSM01M1_IN1_activation_callback() {
-	  FSM01M1_LD2_USER_ON();
-	  FSM01M1_TimeLoop_Default();
-
-	  FSM01M1_LD2_USER_OFF();
-	  FSM01M1_TimeLoop_Default();
+/**
+ * @brief IN1 diagnostic event processing
+ * @retval None
+ */
+__weak void FSM01M1_IN1_activation_callback() {
+	/* NOTE: This function Should not be modified, when the callback is needed,
+		           the FSM01M1_IN1_activation_callback could be implemented in the user file
+		   */
 }
 
-void FSM01M1_IN2_activation_callback() {
-	FSM01M1_LD2_USER_ON();
-	  FSM01M1_TimeLoop_Default();
-
-	  FSM01M1_LD2_USER_OFF();
-	  FSM01M1_TimeLoop_Default();
+/**
+ * @brief IN2 diagnostic event processing
+ * @retval None
+ */
+__weak void FSM01M1_IN2_activation_callback() {
+	/* NOTE: This function Should not be modified, when the callback is needed,
+		           the FSM01M1_IN2_activation_callback could be implemented in the user file
+		   */
 }
 
-void FSM01M1_OUT1_DIAG_alert_callback() {
-
-	/* Detect edge direction (rising/falling) */
-	if(HAL_GPIO_ReadPin(OUT1_DIAG_GPIO_Port, OUT1_DIAG_Pin) == GPIO_PIN_SET) {
-		/* Rising edge detected */
-//		STEVAL_FSM01M1_user_LED_red_OFF();
-	} else {
-		/* Falling edge detected */
-		FSM01M1_user_LED_red_ON();
-	}
+/**
+ * @brief OUT1 diagnostic event processing
+ * @retval None
+ */
+__weak void FSM01M1_OUT1_DIAG_alert_callback() {
+	/* NOTE: This function Should not be modified, when the callback is needed,
+		           the FSM01M1_OUT1_DIAG_alert_callback could be implemented in the user file
+		   */
 }
 
-void FSM01M1_OUT2_DIAG_alert_callback() {
-
-	/* Detect edge direction (rising/falling) */
-	if(HAL_GPIO_ReadPin(OUT2_DIAG_GPIO_Port, OUT2_DIAG_Pin) == GPIO_PIN_SET) {
-		/* Rising edge detected */
-//		STEVAL_FSM01M1_user_LED_red_OFF();
-	} else {
-		/* Falling edge detected */
-		FSM01M1_user_LED_red_ON();
-	}
+/**
+ * @brief OUT2 diagnostic event processing
+ * @retval None
+ */
+__weak void FSM01M1_OUT2_DIAG_alert_callback() {
+	/* NOTE: This function Should not be modified, when the callback is needed,
+	           the FSM01M1_OUT2_DIAG_alert_callback could be implemented in the user file
+	   */
 }
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
