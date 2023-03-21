@@ -75,5 +75,3 @@ uint16_t ADC120_channel_read(SPI_HandleTypeDef *SpiHandle, uint8_t adc_channel_i
 #endif
 
 #endif /* BSP_COMPONENTS_ADC120_INC_ADC120_H_ */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
