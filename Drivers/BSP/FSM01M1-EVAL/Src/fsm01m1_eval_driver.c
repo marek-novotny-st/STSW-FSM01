@@ -75,7 +75,7 @@ void FSM01M1_TimeLoop_Short_div2() {
 }
 
 /**
- * @brief Resets board controls to off state
+ * @brief Deactivates boards optional circuitry
  * @retval None
  */
 
@@ -430,6 +430,11 @@ void FSM01M1_TP2_OFF() {
 
 /* SPI communication control */
 
+/**
+ * @brief Assembles ADC control register
+ * @param adc_channel_id: ADC channel number
+ * @retval ADC channel number
+ */
 uint8_t FSM01M1_ADC120_control_register_assembler(uint8_t adc_channel_id) {
 
 	/* address validation */
@@ -443,6 +448,11 @@ uint8_t FSM01M1_ADC120_control_register_assembler(uint8_t adc_channel_id) {
 	return adc_channel_id;
 }
 
+/**
+ * @brief Assembles SPI frame for ADC
+ * @param adc_control_register: ADC control register address
+ * @retval SPI frame
+ */
 uint16_t FSM01M1_SPI_frame_assembler(uint8_t adc_control_register) {
 
 	uint16_t adc_spi_tx_frame = 0;
@@ -453,6 +463,12 @@ uint16_t FSM01M1_SPI_frame_assembler(uint8_t adc_control_register) {
 	return adc_spi_tx_frame;
 }
 
+/**
+ * @brief Reads ADC channel value
+ * @param SpiHandle: SPI handling structure
+ * @param adc_channel_id: ADC channel number
+ * @retval ADC channel value
+ */
 uint16_t FSM01M1_SPI_ADC120_channel_read(SPI_HandleTypeDef *SpiHandle,
 		uint8_t adc_channel_id) {
 
@@ -463,6 +479,11 @@ uint16_t FSM01M1_SPI_ADC120_channel_read(SPI_HandleTypeDef *SpiHandle,
 	return adc_readout;
 }
 
+/**
+ * @brief Translates ADC reading into quantified analog value
+ * @param adc_value: adc reading
+ * @retval Quantified analog value
+ */
 float FSM01M1_ADC120_translate_to_analog(uint16_t adc_value) {
 
 	float analog_val = 0;
@@ -472,6 +493,11 @@ float FSM01M1_ADC120_translate_to_analog(uint16_t adc_value) {
 	return analog_val;
 }
 
+/**
+ * @brief Rescales quantified analog value into real value
+ * @param analog_val: quantified analog value
+ * @retval Real value
+ */
 float FSM01M1_ADC120_rescale_analog(float analog_val) {
 
 	analog_val = analog_val * FSM01M1_VSENSE_RESCALE_FACTOR;
@@ -480,6 +506,11 @@ float FSM01M1_ADC120_rescale_analog(float analog_val) {
 	return analog_val;
 }
 
+/**
+ * @brief Reads initial ADC value
+ * @param SpiHandle: SPI handling structure
+ * @retval ADC initial value reading
+ */
 float FSM01M1_ADC120_read_blind(SPI_HandleTypeDef *SpiHandle) {
 	uint16_t adc_readout = 0;
 	float voltage_scan = 0.0;
@@ -498,6 +529,12 @@ float FSM01M1_ADC120_read_blind(SPI_HandleTypeDef *SpiHandle) {
 	return voltage_scan;
 }
 
+/**
+ * @brief Reads single ADC channel
+ * @param SpiHandle: SPI handling structure
+ * @param voltage_channel_id: ADC channel number
+ * @retval ADC channel value reading
+ */
 float FSM01M1_ADC120_read_single_node(SPI_HandleTypeDef *SpiHandle, uint8_t voltage_channel_id) {
 
 	uint16_t adc_readout = 0;
@@ -520,6 +557,11 @@ float FSM01M1_ADC120_read_single_node(SPI_HandleTypeDef *SpiHandle, uint8_t volt
 	return voltage_scan;
 }
 
+/**
+ * @brief Reads all ADC channels
+ * @param SpiHandle: SPI handling structure
+ * @retval Status code
+ */
 uint8_t FSM01M1_scan_voltage_vector(SPI_HandleTypeDef *SpiHandle) {
 	uint16_t adc_readout = 0;
 	float voltage_scan = 0.0;
@@ -559,6 +601,10 @@ uint8_t FSM01M1_scan_voltage_vector(SPI_HandleTypeDef *SpiHandle) {
 	return 0;
 }
 
+/**
+ * @brief Handles user button callback
+ * @retval None
+ */
 void FSM01M1_B1_USER_activation_callback() {
 
 	/* Acknowledge eventual dignostic events */
@@ -648,6 +694,11 @@ __weak void FSM01M1_OUT2_DIAG_alert_callback() {
 	   */
 }
 
+/**
+ * @brief External interrupt callback
+ * @param GPIO_Pin: interrupting pin
+ * @retval None
+ */
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 	switch (GPIO_Pin) {
 		case (B1_USER_Pin): {
