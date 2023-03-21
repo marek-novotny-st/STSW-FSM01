@@ -41,6 +41,13 @@ FSM_OperationMode_TypeDef fsm_operation_mode = FSM_MODE_DEFAULT;
  * @}
  */
 
+/* Private functions ---------------------------------------------------------*/
+void FSM01M1_TimeLoop_test_pulse() {
+	uint16_t i;
+
+	for(i = 0; i<0x3FFF; i++);
+}
+
 /* Exported functions --------------------------------------------------------*/
 void FSM01M1_TimeLoop_Default() {
 	uint16_t i,j;
@@ -68,17 +75,42 @@ void FSM01M1_TimeLoop_Short_div2() {
 }
 
 /**
+ * @brief Deactivates boards optional circuitry
+ * @retval None
+ */
+
+void FSM01M1_system_deactivation() {
+
+	FSM01M1_VCC1_DSC_OFF();
+	FSM01M1_VCC2_DSC_OFF();
+	FSM01M1_OUT1_DSC_OFF();
+	FSM01M1_OUT2_DSC_OFF();
+	FSM01M1_CUTOFF1_CTRL_OFF();
+	FSM01M1_CUTOFF2_CTRL_OFF();
+	FSM01M1_OUT1_CTRL_OFF();
+	FSM01M1_OUT2_CTRL_OFF();
+	FSM01M1_VCC1_OFF();
+	FSM01M1_VCC2_OFF();
+
+	FSM01M1_TP1_OFF();
+	FSM01M1_TP2_OFF();
+}
+
+/**
  * @brief Initial setup testing procedure
  * @retval None
  */
 void FSM01M1_initialization() {
 
+	/* System deactivation */
+	FSM01M1_system_deactivation();
 
 	fsm_operation_mode = FSM_MODE_RESET;
 
 
-	/* Initialization sequence starting - NUCLEO onboard LED LD2 ON */
+	/* Initialization sequence starting */
 	FSM01M1_LD2_USER_ON();
+	FSM01M1_TimeLoop_Short();
 
 	/* USER_LED test */
 	FSM01M1_user_LED_green_ON();
@@ -93,46 +125,65 @@ void FSM01M1_initialization() {
 	FSM01M1_user_LED_green_OFF();
 	FSM01M1_TimeLoop_Short();
 
+	/* Verify system passive */
+	FSM01M1_scan_voltage_vector(&hspi2);
+	if (VCC1_scan > FSM01M1_ZERO_VOLTAGE_THRESHOLD ||
+			VCC2_scan > FSM01M1_ZERO_VOLTAGE_THRESHOLD) {
+		FSM01M1_user_LED_red_ON();
+	}
+
+
+	/* ***** CHANNEL 1 FUNCTION TEST ***** */
+
 	/* VCC1 control test */
 	FSM01M1_VCC1_ON();
-	FSM01M1_VCC1_DSC_ON();
 	FSM01M1_TimeLoop_Short();
-	FSM01M1_VCC1_DSC_OFF();
+	FSM01M1_scan_voltage_vector(&hspi2);
+	if (VCC1_scan < FSM01M1_NOMINAL_VOLTAGE_THRESHOLD ||
+			VCC2_scan > FSM01M1_ZERO_VOLTAGE_THRESHOLD) {
+		FSM01M1_user_LED_red_ON();
+	}
 
 	/* OUT1 control test */
 	FSM01M1_OUT1_CTRL_ON();
-	FSM01M1_OUT1_DSC_ON();
 	FSM01M1_TimeLoop_Short();
-	FSM01M1_OUT1_DSC_OFF();
+	FSM01M1_scan_voltage_vector(&hspi2);
+	if (OUT1_scan < FSM01M1_NOMINAL_VOLTAGE_THRESHOLD ||
+			VCC2_scan > FSM01M1_ZERO_VOLTAGE_THRESHOLD) {
+		FSM01M1_user_LED_red_ON();
+	}
+
+	/* ***** CHANNEL 2 FUNCTION TEST ***** */
 
 	/* VCC2 control test */
 	FSM01M1_VCC2_ON();
-	FSM01M1_VCC2_DSC_ON();
 	FSM01M1_TimeLoop_Short();
-	FSM01M1_VCC2_DSC_OFF();
+
+	FSM01M1_scan_voltage_vector(&hspi2);
+	if (VCC1_scan < FSM01M1_NOMINAL_VOLTAGE_THRESHOLD ||
+			VCC2_scan < FSM01M1_NOMINAL_VOLTAGE_THRESHOLD) {
+		FSM01M1_user_LED_red_ON();
+	}
 
 	/* OUT2 control test */
 	FSM01M1_OUT2_CTRL_ON();
-	FSM01M1_OUT2_DSC_ON();
 	FSM01M1_TimeLoop_Short();
-	FSM01M1_OUT2_DSC_OFF();
-
-
-	FSM01M1_OUT1_CTRL_OFF();
+	FSM01M1_scan_voltage_vector(&hspi2);
+	if (OUT1_scan < FSM01M1_NOMINAL_VOLTAGE_THRESHOLD ||
+			OUT2_scan < FSM01M1_NOMINAL_VOLTAGE_THRESHOLD) {
+		FSM01M1_user_LED_red_ON();
+	}
 	FSM01M1_OUT2_CTRL_OFF();
+	FSM01M1_TimeLoop_Short();
 
-	FSM01M1_VCC1_OFF();
-	FSM01M1_VCC2_OFF();
+	/* Initialization sequence ending */
 
-	/* Test pulses static setup */
-	FSM01M1_TP1_OFF();
-	FSM01M1_TP2_OFF();
+	/* Deactivate output stage */
+	FSM01M1_system_deactivation();
 
-	FSM01M1_CUTOFF1_CTRL_OFF();
-	FSM01M1_CUTOFF2_CTRL_OFF();
-
-	/* Initialization sequence starting - NUCLEO onboard LED LD2 ON */
+	/* Deactivate LEDs */
 	FSM01M1_LD2_USER_OFF();
+	FSM01M1_user_LED_green_OFF();
 }
 
 /**
@@ -379,6 +430,11 @@ void FSM01M1_TP2_OFF() {
 
 /* SPI communication control */
 
+/**
+ * @brief Assembles ADC control register
+ * @param adc_channel_id: ADC channel number
+ * @retval ADC channel number
+ */
 uint8_t FSM01M1_ADC120_control_register_assembler(uint8_t adc_channel_id) {
 
 	/* address validation */
@@ -392,6 +448,11 @@ uint8_t FSM01M1_ADC120_control_register_assembler(uint8_t adc_channel_id) {
 	return adc_channel_id;
 }
 
+/**
+ * @brief Assembles SPI frame for ADC
+ * @param adc_control_register: ADC control register address
+ * @retval SPI frame
+ */
 uint16_t FSM01M1_SPI_frame_assembler(uint8_t adc_control_register) {
 
 	uint16_t adc_spi_tx_frame = 0;
@@ -402,6 +463,12 @@ uint16_t FSM01M1_SPI_frame_assembler(uint8_t adc_control_register) {
 	return adc_spi_tx_frame;
 }
 
+/**
+ * @brief Reads ADC channel value
+ * @param SpiHandle: SPI handling structure
+ * @param adc_channel_id: ADC channel number
+ * @retval ADC channel value
+ */
 uint16_t FSM01M1_SPI_ADC120_channel_read(SPI_HandleTypeDef *SpiHandle,
 		uint8_t adc_channel_id) {
 
@@ -412,6 +479,11 @@ uint16_t FSM01M1_SPI_ADC120_channel_read(SPI_HandleTypeDef *SpiHandle,
 	return adc_readout;
 }
 
+/**
+ * @brief Translates ADC reading into quantified analog value
+ * @param adc_value: adc reading
+ * @retval Quantified analog value
+ */
 float FSM01M1_ADC120_translate_to_analog(uint16_t adc_value) {
 
 	float analog_val = 0;
@@ -421,6 +493,11 @@ float FSM01M1_ADC120_translate_to_analog(uint16_t adc_value) {
 	return analog_val;
 }
 
+/**
+ * @brief Rescales quantified analog value into real value
+ * @param analog_val: quantified analog value
+ * @retval Real value
+ */
 float FSM01M1_ADC120_rescale_analog(float analog_val) {
 
 	analog_val = analog_val * FSM01M1_VSENSE_RESCALE_FACTOR;
@@ -429,6 +506,11 @@ float FSM01M1_ADC120_rescale_analog(float analog_val) {
 	return analog_val;
 }
 
+/**
+ * @brief Reads initial ADC value
+ * @param SpiHandle: SPI handling structure
+ * @retval ADC initial value reading
+ */
 float FSM01M1_ADC120_read_blind(SPI_HandleTypeDef *SpiHandle) {
 	uint16_t adc_readout = 0;
 	float voltage_scan = 0.0;
@@ -447,6 +529,12 @@ float FSM01M1_ADC120_read_blind(SPI_HandleTypeDef *SpiHandle) {
 	return voltage_scan;
 }
 
+/**
+ * @brief Reads single ADC channel
+ * @param SpiHandle: SPI handling structure
+ * @param voltage_channel_id: ADC channel number
+ * @retval ADC channel value reading
+ */
 float FSM01M1_ADC120_read_single_node(SPI_HandleTypeDef *SpiHandle, uint8_t voltage_channel_id) {
 
 	uint16_t adc_readout = 0;
@@ -469,6 +557,11 @@ float FSM01M1_ADC120_read_single_node(SPI_HandleTypeDef *SpiHandle, uint8_t volt
 	return voltage_scan;
 }
 
+/**
+ * @brief Reads all ADC channels
+ * @param SpiHandle: SPI handling structure
+ * @retval Status code
+ */
 uint8_t FSM01M1_scan_voltage_vector(SPI_HandleTypeDef *SpiHandle) {
 	uint16_t adc_readout = 0;
 	float voltage_scan = 0.0;
@@ -508,6 +601,10 @@ uint8_t FSM01M1_scan_voltage_vector(SPI_HandleTypeDef *SpiHandle) {
 	return 0;
 }
 
+/**
+ * @brief Handles user button callback
+ * @retval None
+ */
 void FSM01M1_B1_USER_activation_callback() {
 
 	/* Acknowledge eventual dignostic events */
@@ -521,6 +618,14 @@ void FSM01M1_B1_USER_activation_callback() {
 			FSM01M1_OUT1_CTRL_OFF();
 			FSM01M1_OUT2_CTRL_OFF();
 			fsm_operation_mode = FSM_MODE_OUT1_OUT2_OFF;
+
+			FSM01M1_scan_voltage_vector(&hspi2);
+			if (OUT1_scan > FSM01M1_ZERO_VOLTAGE_THRESHOLD ||
+					OUT2_scan > FSM01M1_ZERO_VOLTAGE_THRESHOLD) {
+				FSM01M1_user_LED_red_ON();
+				while(1);
+			}
+
 			break;
 		}
 		case (FSM_MODE_DEFAULT):
@@ -530,53 +635,70 @@ void FSM01M1_B1_USER_activation_callback() {
 			FSM01M1_OUT1_CTRL_ON();
 			FSM01M1_OUT2_CTRL_ON();
 			fsm_operation_mode = FSM_MODE_OUT1_OUT2_ON;
+
+			FSM01M1_scan_voltage_vector(&hspi2);
+			if (OUT1_scan < FSM01M1_NOMINAL_VOLTAGE_THRESHOLD ||
+					OUT2_scan < FSM01M1_NOMINAL_VOLTAGE_THRESHOLD) {
+				FSM01M1_user_LED_red_ON();
+				while(1);
+			}
 		}
 		default: break;
 	}
 	FSM01M1_LD2_USER_OFF();
+
+	HAL_Delay(300);
+	__HAL_GPIO_EXTI_CLEAR_IT(B1_USER_Pin);
+	HAL_NVIC_ClearPendingIRQ(B1_USER_EXTI_IRQn);
+
 	return;
 }
 
-void FSM01M1_IN1_activation_callback() {
-	  FSM01M1_LD2_USER_ON();
-	  FSM01M1_TimeLoop_Default();
-
-	  FSM01M1_LD2_USER_OFF();
-	  FSM01M1_TimeLoop_Default();
+/**
+ * @brief IN1 diagnostic event processing
+ * @retval None
+ */
+__weak void FSM01M1_IN1_activation_callback() {
+	/* NOTE: This function Should not be modified, when the callback is needed,
+		           the FSM01M1_IN1_activation_callback could be implemented in the user file
+		   */
 }
 
-void FSM01M1_IN2_activation_callback() {
-	FSM01M1_LD2_USER_ON();
-	  FSM01M1_TimeLoop_Default();
-
-	  FSM01M1_LD2_USER_OFF();
-	  FSM01M1_TimeLoop_Default();
+/**
+ * @brief IN2 diagnostic event processing
+ * @retval None
+ */
+__weak void FSM01M1_IN2_activation_callback() {
+	/* NOTE: This function Should not be modified, when the callback is needed,
+		           the FSM01M1_IN2_activation_callback could be implemented in the user file
+		   */
 }
 
-void FSM01M1_OUT1_DIAG_alert_callback() {
-
-	/* Detect edge direction (rising/falling) */
-	if(HAL_GPIO_ReadPin(OUT1_DIAG_GPIO_Port, OUT1_DIAG_Pin) == GPIO_PIN_SET) {
-		/* Rising edge detected */
-//		STEVAL_FSM01M1_user_LED_red_OFF();
-	} else {
-		/* Falling edge detected */
-		FSM01M1_user_LED_red_ON();
-	}
+/**
+ * @brief OUT1 diagnostic event processing
+ * @retval None
+ */
+__weak void FSM01M1_OUT1_DIAG_alert_callback() {
+	/* NOTE: This function Should not be modified, when the callback is needed,
+		           the FSM01M1_OUT1_DIAG_alert_callback could be implemented in the user file
+		   */
 }
 
-void FSM01M1_OUT2_DIAG_alert_callback() {
-
-	/* Detect edge direction (rising/falling) */
-	if(HAL_GPIO_ReadPin(OUT2_DIAG_GPIO_Port, OUT2_DIAG_Pin) == GPIO_PIN_SET) {
-		/* Rising edge detected */
-//		STEVAL_FSM01M1_user_LED_red_OFF();
-	} else {
-		/* Falling edge detected */
-		FSM01M1_user_LED_red_ON();
-	}
+/**
+ * @brief OUT2 diagnostic event processing
+ * @retval None
+ */
+__weak void FSM01M1_OUT2_DIAG_alert_callback() {
+	/* NOTE: This function Should not be modified, when the callback is needed,
+	           the FSM01M1_OUT2_DIAG_alert_callback could be implemented in the user file
+	   */
 }
 
+/**
+ * @brief External interrupt callback
+ * @param GPIO_Pin: interrupting pin
+ * @retval None
+ */
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 	switch (GPIO_Pin) {
 		case (B1_USER_Pin): {
