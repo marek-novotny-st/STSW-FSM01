@@ -212,13 +212,14 @@ void FSM01M1_DIAG_list_actions() {
 				msg.AppendStr("off [global]\n", &msg);
 				break;
 			case state:
-				msg.AppendStr("state\n", &msg);
+				msg.AppendStr("state - returns if device is on or off\n", &msg);
 				break;
 			case states:
 				msg.AppendStr("states [global]\n", &msg);
 				break;
 			case level:
-				msg.AppendStr("level\n", &msg);
+				msg.AppendStr("level - returns numeric representation of device state"
+						"(integer 1 and 0 denote logical state, decimals denote physical state)\n", &msg);
 				break;
 			case levels:
 				msg.AppendStr("levels [global]\n", &msg);

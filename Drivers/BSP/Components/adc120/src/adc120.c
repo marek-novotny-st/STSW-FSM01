@@ -34,7 +34,7 @@ static adc120Drv_t adc120Drv = {
 	ADC120_Init,                         /* void (*Init)(void*); */
 	ADC120_AttachErrorHandler,           /* void (*AttachErrorHandler)(void (*callback)(uint16_t)); */
 	ADC120_ErrorHandler,	             /* void (*ErrorHandler)(uint16_t); */
-	Adc120_ReadAdcChannel				 /* uint8_t (*ReadAdcChannel)(uint8_t) */
+	//Adc120_ReadAdcChannel				 /* uint8_t (*ReadAdcChannel)(uint8_t) */
 };
 
 
