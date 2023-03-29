@@ -115,6 +115,7 @@ void FSM01M1_DIAG_splash_msg() {
 	msg.AppendStr("***** STEVAL-FSM01M1 DIAGNOSTIC TOOL *****\n", &msg);
 	msg.AppendStr("* Type help for usage information", &msg);
 	FSM01M1_USART_vCOM_WriteLine(&msg);
+	FSM01M1_USART_vCOM_WriteChar('\n');
 }
 
 /**
@@ -241,6 +242,8 @@ void FSM01M1_DIAG_list_actions() {
 void FSM01M1_DIAG_resolve(char * cmd, DIAG_DeviceTypeDef target) {
 	if (cmd[0] == '\r' || cmd[0] == '\n') cmd = cmd + 1;
 	char * arg = (char *) strtok_r(cmd, " ", &token_ctx);
+
+	if (arg == NULL) return;
 	arg[strcspn(arg, "\r\n")] = '\0';
 
 	if (arg[0] == '\0') return;

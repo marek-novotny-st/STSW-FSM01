@@ -110,20 +110,20 @@ void FSM01M1_initialization() {
 
 	/* Initialization sequence starting */
 	FSM01M1_LD2_USER_ON();
-	FSM01M1_TimeLoop_Short();
+	HAL_Delay(350);
 
 	/* USER_LED test */
 	FSM01M1_user_LED_green_ON();
-	FSM01M1_TimeLoop_Short();
+	HAL_Delay(350);
 
 	FSM01M1_user_LED_red_ON();
-	FSM01M1_TimeLoop_Short();
+	HAL_Delay(350);
 
 	FSM01M1_user_LED_red_OFF();
-	FSM01M1_TimeLoop_Short();
+	HAL_Delay(350);
 
 	FSM01M1_user_LED_green_OFF();
-	FSM01M1_TimeLoop_Short();
+	HAL_Delay(350);
 
 	/* Verify system passive */
 	FSM01M1_scan_voltage_vector(&hspi2);
@@ -137,7 +137,7 @@ void FSM01M1_initialization() {
 
 	/* VCC1 control test */
 	FSM01M1_VCC1_ON();
-	FSM01M1_TimeLoop_Short();
+	HAL_Delay(350);
 	FSM01M1_scan_voltage_vector(&hspi2);
 	if (VCC1_scan < FSM01M1_NOMINAL_VOLTAGE_THRESHOLD ||
 			VCC2_scan > FSM01M1_ZERO_VOLTAGE_THRESHOLD) {
@@ -146,7 +146,7 @@ void FSM01M1_initialization() {
 
 	/* OUT1 control test */
 	FSM01M1_OUT1_CTRL_ON();
-	FSM01M1_TimeLoop_Short();
+	HAL_Delay(350);
 	FSM01M1_scan_voltage_vector(&hspi2);
 	if (OUT1_scan < FSM01M1_NOMINAL_VOLTAGE_THRESHOLD ||
 			VCC2_scan > FSM01M1_ZERO_VOLTAGE_THRESHOLD) {
@@ -157,7 +157,7 @@ void FSM01M1_initialization() {
 
 	/* VCC2 control test */
 	FSM01M1_VCC2_ON();
-	FSM01M1_TimeLoop_Short();
+	HAL_Delay(350);
 
 	FSM01M1_scan_voltage_vector(&hspi2);
 	if (VCC1_scan < FSM01M1_NOMINAL_VOLTAGE_THRESHOLD ||
@@ -167,14 +167,14 @@ void FSM01M1_initialization() {
 
 	/* OUT2 control test */
 	FSM01M1_OUT2_CTRL_ON();
-	FSM01M1_TimeLoop_Short();
+	HAL_Delay(350);
 	FSM01M1_scan_voltage_vector(&hspi2);
 	if (OUT1_scan < FSM01M1_NOMINAL_VOLTAGE_THRESHOLD ||
 			OUT2_scan < FSM01M1_NOMINAL_VOLTAGE_THRESHOLD) {
 		FSM01M1_user_LED_red_ON();
 	}
 	FSM01M1_OUT2_CTRL_OFF();
-	FSM01M1_TimeLoop_Short();
+	HAL_Delay(350);
 
 	/* Initialization sequence ending */
 
