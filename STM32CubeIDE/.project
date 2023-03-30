@@ -36,6 +36,11 @@
 			<locationURI>PARENT-1-PROJECT_LOC/STSW-FSM01.ioc</locationURI>
 		</link>
 		<link>
+			<name>Drivers/BSP</name>
+			<type>2</type>
+			<location>C:/STMProj/repos/STSW-FSM01M1_fork/STSW-FSM01/Drivers/BSP</location>
+		</link>
+		<link>
 			<name>Application/User/main.c</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/Src/main.c</locationURI>
