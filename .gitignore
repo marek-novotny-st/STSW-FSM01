@@ -1,0 +1,14 @@
+/Debug/
+/.settings/
+EWARM/settings
+EWARM/STSW-FSM01M1
+EWARM/STSW-FSM01M1.dep
+MDK-ARM/DebugConfig
+MDK-ARM/RTE
+MDK-ARM/STSW-FSM01M1
+MDK-ARM/Packs_STSW-FSM01M1.htm
+MDK-ARM/STSW-FSM01M1.uvguix.marek novotny
+MDK-ARM/STSW-FSM01M1.uvguix.marek novotny-adm
+STM32CubeIDE/.settings
+*.launch
+Docs
