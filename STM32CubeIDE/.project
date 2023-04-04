@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>STSW-FSM01M1</name>
+	<name>STSW-FSM01</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -31,14 +31,14 @@
 	</natures>
 	<linkedResources>
 		<link>
-			<name>STSW-FSM01M1.ioc</name>
+			<name>STSW-FSM01.ioc</name>
 			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/STSW-FSM01M1.ioc</locationURI>
+			<locationURI>PARENT-1-PROJECT_LOC/STSW-FSM01.ioc</locationURI>
 		</link>
 		<link>
 			<name>Drivers/BSP</name>
 			<type>2</type>
-			<location>C:/STMProj/repos/STSW-FSM01M1_fork/STSW-FSM01M1/Drivers/BSP</location>
+			<location>C:/STMProj/repos/STSW-FSM01M1_fork/STSW-FSM01/Drivers/BSP</location>
 		</link>
 		<link>
 			<name>Application/User/main.c</name>

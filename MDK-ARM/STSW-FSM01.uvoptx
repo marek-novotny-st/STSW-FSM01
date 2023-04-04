@@ -22,7 +22,7 @@
   </DaveTm>
 
   <Target>
-    <TargetName>STSW-FSM01M1</TargetName>
+    <TargetName>STSW-FSM01</TargetName>
     <ToolsetNumber>0x4</ToolsetNumber>
     <ToolsetName>ARM-ADS</ToolsetName>
     <TargetOption>
@@ -203,7 +203,7 @@
 
   <Group>
     <GroupName>Application/User</GroupName>
-    <tvExp>1</tvExp>
+    <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -479,7 +479,7 @@
 
   <Group>
     <GroupName>Drivers/BSP/Components/adc120</GroupName>
-    <tvExp>1</tvExp>
+    <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -499,37 +499,13 @@
 
   <Group>
     <GroupName>Drivers/BSP/FSM01M1-EVAL</GroupName>
-    <tvExp>1</tvExp>
+    <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
     <File>
       <GroupNumber>6</GroupNumber>
       <FileNumber>24</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\Drivers\BSP\FSM01M1-EVAL\Src\fsm01m1_eval_driver.c</PathWithFileName>
-      <FilenameWithoutPath>fsm01m1_eval_driver.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>6</GroupNumber>
-      <FileNumber>25</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\Drivers\BSP\FSM01M1-EVAL\Src\fsm01m1_eval_usart_driver.c</PathWithFileName>
-      <FilenameWithoutPath>fsm01m1_eval_usart_driver.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>6</GroupNumber>
-      <FileNumber>26</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -541,25 +517,25 @@
     </File>
     <File>
       <GroupNumber>6</GroupNumber>
-      <FileNumber>27</FileNumber>
+      <FileNumber>25</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Drivers\BSP\FSM01M1-EVAL\Src\fsm01m1_eval_pulse_driver.c</PathWithFileName>
-      <FilenameWithoutPath>fsm01m1_eval_pulse_driver.c</FilenameWithoutPath>
+      <PathWithFileName>..\Drivers\BSP\FSM01M1-EVAL\Src\fsm01m1_eval_driver.c</PathWithFileName>
+      <FilenameWithoutPath>fsm01m1_eval_driver.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
     <File>
       <GroupNumber>6</GroupNumber>
-      <FileNumber>28</FileNumber>
+      <FileNumber>26</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Drivers\BSP\FSM01M1-EVAL\Src\fsm01m1_eval_tests.c</PathWithFileName>
-      <FilenameWithoutPath>fsm01m1_eval_tests.c</FilenameWithoutPath>
+      <PathWithFileName>..\Drivers\BSP\FSM01M1-EVAL\Src\fsm01m1_eval_usart_driver.c</PathWithFileName>
+      <FilenameWithoutPath>fsm01m1_eval_usart_driver.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>

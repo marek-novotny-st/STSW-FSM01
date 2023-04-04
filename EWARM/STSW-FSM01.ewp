@@ -2,7 +2,7 @@
 <project>
     <fileVersion>3</fileVersion>
     <configuration>
-        <name>STSW-FSM01M1</name>
+        <name>STSW-FSM01</name>
         <toolchain>
             <name>ARM</name>
         </toolchain>
@@ -16,19 +16,19 @@
                 <debug>1</debug>
                 <option>
                     <name>BrowseInfoPath</name>
-                    <state>STSW-FSM01M1\BrowseInfo</state>
+                    <state>STSW-FSM01\BrowseInfo</state>
                 </option>
                 <option>
                     <name>ExePath</name>
-                    <state>STSW-FSM01M1/Exe</state>
+                    <state>STSW-FSM01/Exe</state>
                 </option>
                 <option>
                     <name>ObjPath</name>
-                    <state>STSW-FSM01M1/Obj</state>
+                    <state>STSW-FSM01/Obj</state>
                 </option>
                 <option>
                     <name>ListPath</name>
-                    <state>STSW-FSM01M1/List</state>
+                    <state>STSW-FSM01/List</state>
                 </option>
                 <option>
                     <name>GEndianMode</name>
@@ -201,7 +201,7 @@
                 </option>
                 <option>
                     <name>BuildFilesPath</name>
-                    <state>STSW-FSM01M1</state>
+                    <state>STSW-FSM01</state>
                 </option>
                 <option>
                     <name>PointerAuthentication</name>
@@ -599,7 +599,7 @@
                 </option>
                 <option>
                     <name>AOutputFile</name>
-                    <state>$FILE_BNAME$.o</state>
+                    <state></state>
                 </option>
                 <option>
                     <name>ALimitErrorsCheck</name>
@@ -653,7 +653,7 @@
                 </option>
                 <option>
                     <name>OOCOutputFile</name>
-                    <state>STSW-FSM01M1.hex</state>
+                    <state>STSW-FSM01.hex</state>
                 </option>
                 <option>
                     <name>OOCCommandLineProducer</name>
@@ -692,7 +692,7 @@
                 <debug>1</debug>
                 <option>
                     <name>IlinkOutputFile</name>
-                    <state>STSW-FSM01M1.out</state>
+                    <state>STSW-FSM01.out</state>
                 </option>
                 <option>
                     <name>IlinkLibIOConfig</name>
@@ -997,7 +997,7 @@
                 </option>
                 <option>
                     <name>IlinkTrustzoneImportLibraryOut</name>
-                    <state>STSW-FSM01M1_import_lib.o</state>
+                    <state></state>
                 </option>
                 <option>
                     <name>OILinkExtraOption</name>
@@ -1125,12 +1125,6 @@
                 </file>
                 <file>
                     <name>$PROJ_DIR$\..\Drivers\BSP\FSM01M1-EVAL\Src\fsm01m1_eval_driver.c</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\Drivers\BSP\FSM01M1-EVAL\Src\fsm01m1_eval_pulse_driver.c</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\Drivers\BSP\FSM01M1-EVAL\Src\fsm01m1_eval_tests.c</name>
                 </file>
                 <file>
                     <name>$PROJ_DIR$\..\Drivers\BSP\FSM01M1-EVAL\Src\fsm01m1_eval_usart_driver.c</name>

@@ -7,7 +7,7 @@
 
   <Targets>
     <Target>
-      <TargetName>STSW-FSM01M1</TargetName>
+      <TargetName>STSW-FSM01</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
       <pCCUsed>6190000::V6.19::ARMCLANG</pCCUsed>
@@ -48,8 +48,8 @@
             <NotGenerated>0</NotGenerated>
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
-          <OutputDirectory>STSW-FSM01M1\</OutputDirectory>
-          <OutputName>STSW-FSM01M1</OutputName>
+          <OutputDirectory>STSW-FSM01\</OutputDirectory>
+          <OutputName>STSW-FSM01</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
           <CreateHexFile>1</CreateHexFile>
@@ -138,7 +138,7 @@
           </Flash1>
           <bUseTDR>1</bUseTDR>
           <Flash2>BIN\UL2V8M.DLL</Flash2>
-          <Flash3></Flash3>
+          <Flash3>"" ()</Flash3>
           <Flash4></Flash4>
           <pFcarmOut></pFcarmOut>
           <pFcarmGrp></pFcarmGrp>
@@ -525,6 +525,11 @@
           <GroupName>Drivers/BSP/FSM01M1-EVAL</GroupName>
           <Files>
             <File>
+              <FileName>fsm01m1_eval_diagnostic_driver.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\BSP\FSM01M1-EVAL\Src\fsm01m1_eval_diagnostic_driver.c</FilePath>
+            </File>
+            <File>
               <FileName>fsm01m1_eval_driver.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Drivers\BSP\FSM01M1-EVAL\Src\fsm01m1_eval_driver.c</FilePath>
@@ -533,21 +538,6 @@
               <FileName>fsm01m1_eval_usart_driver.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Drivers\BSP\FSM01M1-EVAL\Src\fsm01m1_eval_usart_driver.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsm01m1_eval_diagnostic_driver.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Drivers\BSP\FSM01M1-EVAL\Src\fsm01m1_eval_diagnostic_driver.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsm01m1_eval_pulse_driver.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Drivers\BSP\FSM01M1-EVAL\Src\fsm01m1_eval_pulse_driver.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsm01m1_eval_tests.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Drivers\BSP\FSM01M1-EVAL\Src\fsm01m1_eval_tests.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -564,7 +554,7 @@
       <component Cclass="CMSIS" Cgroup="CORE" Cvendor="ARM" Cversion="5.6.0" condition="ARMv6_7_8-M Device">
         <package name="CMSIS" schemaVersion="1.7.7" url="http://www.keil.com/pack/" vendor="ARM" version="5.9.0"/>
         <targetInfos>
-          <targetInfo name="STSW-FSM01M1"/>
+          <targetInfo name="STSW-FSM01"/>
         </targetInfos>
       </component>
     </components>
@@ -574,7 +564,7 @@
   <LayerInfo>
     <Layers>
       <Layer>
-        <LayName>STSW-FSM01M1</LayName>
+        <LayName>STSW-FSM01</LayName>
         <LayPrjMark>1</LayPrjMark>
       </Layer>
     </Layers>
