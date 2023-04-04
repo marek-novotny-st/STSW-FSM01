@@ -12,3 +12,7 @@ MDK-ARM/STSW-FSM01M1.uvguix.marek novotny-adm
 STM32CubeIDE/.settings
 *.launch
 Docs
+EWARM/STSW-FSM01
+EWARM/STSW-FSM01.dep
+MDK-ARM/STSW-FSM01
+MDK-ARM/STSW-FSM01.uvguix.marek novotny-adm
