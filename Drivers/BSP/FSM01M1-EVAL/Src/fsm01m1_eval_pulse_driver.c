@@ -118,8 +118,9 @@ void HAL_TIM_PWM_PulseFinishedCallback(TIM_HandleTypeDef *htim) {
 	else if (htim->Instance == TIM1) FSM01M1_OUT2_DSC_ON();
 }
 
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
-	/* turn off discharge path for new period */
-	if (htim->Instance == TIM4) FSM01M1_OUT1_DSC_OFF();
-	else if (htim->Instance == TIM1) FSM01M1_OUT2_DSC_OFF();
-}
+// TODO: callback is in main.c, create monolithic callback management
+//void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
+//	/* turn off discharge path for new period */
+//	if (htim->Instance == TIM4) FSM01M1_OUT1_DSC_OFF();
+//	else if (htim->Instance == TIM1) FSM01M1_OUT2_DSC_OFF();
+//}
