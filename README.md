@@ -1,2 +1,2 @@
-# STSW-FSM01M1
-Software package for FSM01M1 expansion board
+# STSW-FSM01
+Software package for FSM01 expansion board
