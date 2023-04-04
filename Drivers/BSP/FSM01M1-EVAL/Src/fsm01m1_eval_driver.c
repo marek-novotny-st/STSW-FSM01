@@ -41,44 +41,12 @@ FSM_OperationMode_TypeDef fsm_operation_mode = FSM_MODE_DEFAULT;
  * @}
  */
 
-/* Private functions ---------------------------------------------------------*/
-void FSM01M1_TimeLoop_test_pulse() {
-	uint16_t i;
-
-	for(i = 0; i<0x3FFF; i++);
-}
-
 /* Exported functions --------------------------------------------------------*/
-void FSM01M1_TimeLoop_Default() {
-	uint16_t i,j;
-
-	for(i = 0; i<0xFFFF; i++) {
-		for(j = 0; j<0xF; j++);
-	}
-}
-
-/* 350ms */
-void FSM01M1_TimeLoop_Short() {
-	uint16_t i,j;
-
-	for(i = 0; i<0x7FFF; i++) {
-		for(j = 0; j<0xF; j++);
-	}
-}
-
-void FSM01M1_TimeLoop_Short_div2() {
-	uint16_t i,j;
-
-	for(i = 0; i<0x3FFF; i++) {
-		for(j = 0; j<0xF; j++);
-	}
-}
 
 /**
- * @brief Deactivatea boards optional circuitry
+ * @brief Deactivates boards optional circuitry
  * @retval None
  */
-
 void FSM01M1_system_deactivation() {
 
 	FSM01M1_VCC1_DSC_OFF();

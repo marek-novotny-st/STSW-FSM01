@@ -282,25 +282,6 @@ void FSM01M1_DIAG_resolve(char * cmd, DIAG_DeviceTypeDef target) {
 }
 
 /**
- * @brief Resets devices to off state
- * @retval None
- */
-void FSM01M1_DIAG_reset_devices() {
-	FSM01M1_VCC1_OFF();
-	FSM01M1_VCC1_DSC_OFF();
-	FSM01M1_VCC2_OFF();
-	FSM01M1_VCC2_DSC_OFF();
-	FSM01M1_OUT1_CTRL_OFF();
-	FSM01M1_OUT1_DSC_OFF();
-	FSM01M1_OUT2_CTRL_OFF();
-	FSM01M1_OUT2_DSC_OFF();
-	FSM01M1_CUTOFF1_CTRL_OFF();
-	FSM01M1_CUTOFF2_CTRL_OFF();
-	FSM01M1_TP1_OFF();
-	FSM01M1_TP2_OFF();
-}
-
-/**
  * @brief Provides device switching services
  * @param dev: device
  * @param act: action
@@ -372,7 +353,7 @@ void FSM01M1_DIAG_switch(DIAG_DeviceTypeDef dev, DIAG_ActionTypeDef act) {
 			else FSM01M1_TP2_OFF();
 			break;
 		case all:
-			if (act == off) FSM01M1_DIAG_reset_devices();
+			if (act == off) FSM01M1_system_deactivation();
 		default:
 			break;
 	}
