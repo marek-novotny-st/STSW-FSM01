@@ -24,5 +24,7 @@ void FSM01M1_PULSE_PulseGen_TIM_Start(TIM_HandleTypeDef * htim, uint32_t channel
 void FSM01M1_PULSE_PulseGen_TIM_Stop(TIM_HandleTypeDef *htim, uint32_t channel);
 void FSM01M1_PULSE_PulseGen_TIM_Start_IT(TIM_HandleTypeDef * htim, uint32_t channel);
 void FSM01M1_PULSE_PulseGen_TIM_Stop_IT(TIM_HandleTypeDef *htim, uint32_t channel);
+void FSM01M1_PULSE_PulseFinishedCallback(TIM_HandleTypeDef *htim);
+void FSM01M1_PULSE_PeriodElapsedCallback(TIM_HandleTypeDef *htim);
 
 #endif /* BSP_FSM01M1_EVAL_INC_FSM01M1_EVAL_PULSE_DRIVER_H_ */
