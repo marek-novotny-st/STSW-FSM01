@@ -38,7 +38,7 @@
 		<link>
 			<name>Drivers/BSP</name>
 			<type>2</type>
-			<location>C:/STMProj/repos/STSW-FSM01M1_fork/STSW-FSM01/Drivers/BSP</location>
+			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/Drivers/BSP</locationURI>
 		</link>
 		<link>
 			<name>Application/User/main.c</name>
