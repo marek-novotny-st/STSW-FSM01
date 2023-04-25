@@ -59,10 +59,9 @@ DIAG_DeviceTypeDef outputs[2] = { out1, out2 };
 DIAG_DeviceTypeDef sources[3] = { vcc, vcc1, vcc2 };
 
 /* registered actions */
-DIAG_ActionTypeDef actions[7] = {
+DIAG_ActionTypeDef actions[6] = {
 		on,
 		off,
-		read,
 		state,
 		states,
 		level,
