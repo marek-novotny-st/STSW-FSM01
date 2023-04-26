@@ -68,6 +68,8 @@ DIAG_ActionTypeDef actions[6] = {
 		levels
 };
 
+USART_MessageTypeDef cmd;
+USART_MessageTypeDef msg;
 /* Private function prototypes -----------------------------------------------*/
 void FSM01M1_DIAG_splash_msg();
 void FSM01M1_DIAG_read(DIAG_DeviceTypeDef dev, USART_FormatTypeDef fmt);
@@ -86,7 +88,8 @@ void FSM01M1_DIAG_states();
  */
 void FSM01M1_DIAG_IO_Loop(UART_HandleTypeDef * huart) {
 	FSM01M1_USART_vCOM_Config(huart);
-	USART_MessageTypeDef cmd = FSM01M1_USART_vCOM_CreateMessage();
+	cmd = FSM01M1_USART_vCOM_CreateMessage();
+	msg = FSM01M1_USART_vCOM_CreateMessage();
 
 	FSM01M1_DIAG_splash_msg();
 	while(1) {
@@ -110,7 +113,7 @@ void FSM01M1_DIAG_IO_Loop(UART_HandleTypeDef * huart) {
  * @retval None
  */
 void FSM01M1_DIAG_splash_msg() {
-	USART_MessageTypeDef msg = FSM01M1_USART_vCOM_CreateMessage();
+	msg.Reset(&msg);
 	msg.AppendStr("***** STEVAL-FSM01M1 DIAGNOSTIC TOOL *****\n", &msg);
 	msg.AppendStr("* Type help for usage information", &msg);
 	FSM01M1_USART_vCOM_WriteLine(&msg);
@@ -122,7 +125,7 @@ void FSM01M1_DIAG_splash_msg() {
  * @retval None
  */
 void FSM01M1_DIAG_help() {
-	USART_MessageTypeDef msg = FSM01M1_USART_vCOM_CreateMessage();
+	msg.Reset(&msg);
 	msg.AppendStr("[device] [action] - applies action to a device\n"
 			"[global_action] - applies action to all devices\n"
 			"- Type 'devices' for device list\n"
@@ -138,7 +141,7 @@ void FSM01M1_DIAG_help() {
 void FSM01M1_DIAG_list_devices() {
 	int dev_count = sizeof(devices)/sizeof(DIAG_DeviceTypeDef);
 
-	USART_MessageTypeDef msg = FSM01M1_USART_vCOM_CreateMessage();
+	msg.Reset(&msg);
 	for (int i = 0; i < dev_count; i += 1) {
 		switch (devices[i]) {
 			case vcc:
@@ -201,7 +204,7 @@ void FSM01M1_DIAG_list_devices() {
 void FSM01M1_DIAG_list_actions() {
 	int act_len = sizeof(actions)/sizeof(DIAG_ActionTypeDef);
 
-	USART_MessageTypeDef msg = FSM01M1_USART_vCOM_CreateMessage();
+	msg.Reset(&msg);
 	for (int i = 0; i < act_len; i += 1) {
 		switch (actions[i]) {
 			case on:
@@ -274,7 +277,7 @@ void FSM01M1_DIAG_resolve(char * cmd, DIAG_DeviceTypeDef target) {
 	else if (strcmp(arg, "actions") == 0) FSM01M1_DIAG_list_actions();
 	else if (strcmp(arg, "clear") == 0) FSM01M1_USART_vCOM_Clear();
 	else {
-		USART_MessageTypeDef msg = FSM01M1_USART_vCOM_CreateMessage();
+		msg.Reset(&msg);
 		msg.AppendStr("Invalid command, no actions performed", &msg);
 		FSM01M1_USART_vCOM_WriteLine(&msg);
 	}
@@ -365,7 +368,7 @@ void FSM01M1_DIAG_switch(DIAG_DeviceTypeDef dev, DIAG_ActionTypeDef act) {
  * @retval None
  */
 void FSM01M1_DIAG_read(DIAG_DeviceTypeDef dev, USART_FormatTypeDef fmt) {
-	USART_MessageTypeDef msg = FSM01M1_USART_vCOM_CreateMessage();
+	msg.Reset(&msg);
 
 	int logic = -1;
 	float reading = -1.0;
