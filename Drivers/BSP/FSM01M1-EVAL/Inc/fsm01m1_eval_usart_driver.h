@@ -29,7 +29,7 @@ extern "C" {
 #include "stm32f4xx_hal.h"
 
 /* Exported constants --------------------------------------------------------*/
-#define USART_MAX_MSG_LEN 1000
+#define USART_MAX_MSG_LEN 255
 
 /* Exported types ------------------------------------------------------------*/
 typedef enum USART_MsgFlag_t {
