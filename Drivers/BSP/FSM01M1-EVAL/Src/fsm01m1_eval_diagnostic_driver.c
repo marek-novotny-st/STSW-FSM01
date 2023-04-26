@@ -130,6 +130,7 @@ void FSM01M1_DIAG_help() {
 			"[global_action] - applies action to all devices\n"
 			"- Type 'devices' for device list\n"
 			"- Type 'actions' for action list\n"
+			"- Type 'clear' to clear text from terminal\n"
 			/*"- Use 'x' in device identifiers for numerical wildcard (e.g. outx selects all outputs)\n"*/, &msg);
 	FSM01M1_USART_vCOM_Write(&msg);
 }

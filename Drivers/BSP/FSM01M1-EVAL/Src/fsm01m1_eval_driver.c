@@ -676,7 +676,7 @@ __weak void FSM01M1_OUT2_DIAG_alert_callback() {
  * @param GPIO_Pin: interrupting pin
  * @retval None
  */
-__weak void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 	/* NOTE: This function Should not be modified, when the callback is needed,
 		           the FSM01M1_OUT2_DIAG_alert_callback could be implemented in the user file
 		   */
