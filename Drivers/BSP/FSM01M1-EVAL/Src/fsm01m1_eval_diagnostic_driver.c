@@ -126,9 +126,9 @@ void FSM01M1_DIAG_splash_msg() {
  */
 void FSM01M1_DIAG_help() {
 	msg.Reset(&msg);
-	msg.AppendStr("[device] [action] - applies action to a device\n"
-			"[global_action] - applies action to all devices\n"
-			"- Type 'devices' for device list\n"
+	msg.AppendStr("[function] [action] - applies action to a function\n"
+			"[global_action] - applies action to all functions\n"
+			"- Type 'functions' for function list\n"
 			"- Type 'actions' for action list\n"
 			"- Type 'clear' to clear text from terminal\n"
 			/*"- Use 'x' in device identifiers for numerical wildcard (e.g. outx selects all outputs)\n"*/, &msg);
@@ -216,13 +216,13 @@ void FSM01M1_DIAG_list_actions() {
 				msg.AppendStr("off [global]\n", &msg);
 				break;
 			case state:
-				msg.AppendStr("state - returns if device is on or off\n", &msg);
+				msg.AppendStr("state - returns if function is on or off\n", &msg);
 				break;
 			case states:
 				msg.AppendStr("states [global]\n", &msg);
 				break;
 			case level:
-				msg.AppendStr("level - returns numeric representation of device state"
+				msg.AppendStr("level - returns numeric representation of function state"
 						"(integer 1 and 0 denote logical state, decimals denote physical state)\n", &msg);
 				break;
 			case levels:
@@ -274,7 +274,7 @@ void FSM01M1_DIAG_resolve(char * cmd, DIAG_DeviceTypeDef target) {
 	else if (strcmp(arg, "levels") == 0) FSM01M1_DIAG_levels();
 	else if (strcmp(arg, "states") == 0) FSM01M1_DIAG_states();
 	else if (strcmp(arg, "help") == 0) FSM01M1_DIAG_help();
-	else if (strcmp(arg, "devices") == 0) FSM01M1_DIAG_list_devices();
+	else if (strcmp(arg, "functions") == 0) FSM01M1_DIAG_list_devices();
 	else if (strcmp(arg, "actions") == 0) FSM01M1_DIAG_list_actions();
 	else if (strcmp(arg, "clear") == 0) FSM01M1_USART_vCOM_Clear();
 	else {
