@@ -239,6 +239,7 @@ void FSM01M1_VCC1_DSC_OFF() {
  * @retval None
  */
 void FSM01M1_OUT1_CTRL_ON() {
+	FSM01M1_VCC1_ON();
 	HAL_GPIO_WritePin(OUT1_CTRL_GPIO_Port, OUT1_CTRL_Pin, GPIO_PIN_SET);
 }
 
@@ -319,6 +320,7 @@ void FSM01M1_VCC2_DSC_OFF() {
  * @retval None
  */
 void FSM01M1_OUT2_CTRL_ON() {
+	FSM01M1_VCC2_ON();
 	HAL_GPIO_WritePin(OUT2_CTRL_GPIO_Port, OUT2_CTRL_Pin, GPIO_PIN_SET);
 }
 
