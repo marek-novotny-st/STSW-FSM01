@@ -97,8 +97,6 @@ void FSM01M1_DIAG_IO_Loop(UART_HandleTypeDef * huart) {
 			FSM01M1_DIAG_resolve(cmd.data, all);
 			cmd.Reset(&cmd);
 			cmd.flag = idle;
-
-			FSM01M1_USART_vCOM_WriteChar('\n');
 		}
 		if (cmd.flag == idle) {
 			FSM01M1_USART_vCOM_ReadLine(&cmd);
@@ -377,63 +375,63 @@ void FSM01M1_DIAG_read(DIAG_DeviceTypeDef dev, USART_FormatTypeDef fmt) {
 	switch (dev) {
 		case vcc:
 			reading = FSM01M1_ADC120_read_single_node(&hspi2, VCC_ADC_CHANNEL_ID);
-			msg.AppendStr("VCC = ", &msg);
+			msg.AppendStr("VCC \t\t = ", &msg);
 			break;
 		case vcc1:
 			reading = FSM01M1_ADC120_read_single_node(&hspi2, VCC1_ADC_CHANNEL_ID);
-			msg.AppendStr("VCC1 = ", &msg);
+			msg.AppendStr("VCC1 \t\t = ", &msg);
 			break;
 		case vcc1_dsc:
 			logic = (int) HAL_GPIO_ReadPin(VCC1_DSC_GPIO_Port, VCC1_DSC_Pin);
-			msg.AppendStr("VCC1_DSC = ", &msg);
+			msg.AppendStr("VCC1_DSC \t = ", &msg);
 			break;
 		case vcc2:
 			reading = FSM01M1_ADC120_read_single_node(&hspi2, VCC2_ADC_CHANNEL_ID);
-			msg.AppendStr("VCC2 = ", &msg);
+			msg.AppendStr("VCC2 \t\t = ", &msg);
 			break;
 		case vcc2_dsc:
 			logic = (int) HAL_GPIO_ReadPin(VCC2_DSC_GPIO_Port, VCC2_DSC_Pin);
-			msg.AppendStr("VCC2_DSC = ", &msg);
+			msg.AppendStr("VCC2_DSC \t = ", &msg);
 			break;
 		case in1:
 			logic = (int) HAL_GPIO_ReadPin(OUTP1_GPIO_Port, OUTP1_Pin);
-			msg.AppendStr("IN1 = ", &msg);
+			msg.AppendStr("IN1 \t\t = ", &msg);
 			break;
 		case in2:
 			logic = (int) HAL_GPIO_ReadPin(OUTP2_GPIO_Port, OUTP2_Pin);
-			msg.AppendStr("IN2 = ", &msg);
+			msg.AppendStr("IN2 \t\t = ", &msg);
 			break;
 		case out1:
 			reading = FSM01M1_ADC120_read_single_node(&hspi2, OUT1_ADC_CHANNEL_ID);
-			msg.AppendStr("OUT1 = ", &msg);
+			msg.AppendStr("OUT1 \t\t = ", &msg);
 			break;
 		case out1_dsc:
 			logic = (int) HAL_GPIO_ReadPin(OUT1_DSC_GPIO_Port, OUT1_DSC_Pin);
-			msg.AppendStr("OUT1_DSC = ", &msg);
+			msg.AppendStr("OUT1_DSC \t = ", &msg);
 			break;
 		case out2:
 			reading = FSM01M1_ADC120_read_single_node(&hspi2, OUT2_ADC_CHANNEL_ID);
-			msg.AppendStr("OUT2 = ", &msg);
+			msg.AppendStr("OUT2 \t\t = ", &msg);
 			break;
 		case out2_dsc:
 			logic = (int) HAL_GPIO_ReadPin(OUT2_DSC_GPIO_Port, OUT2_DSC_Pin);
-			msg.AppendStr("OUT2_DSC = ", &msg);
+			msg.AppendStr("OUT2_DSC \t = ", &msg);
 			break;
 		case coff1:
 			logic = (int) HAL_GPIO_ReadPin(COFF1_CTRL_GPIO_Port, COFF1_CTRL_Pin) == GPIO_PIN_RESET;
-			msg.AppendStr("COFF1 = ", &msg);
+			msg.AppendStr("COFF1 \t\t = ", &msg);
 			break;
 		case coff2:
 			logic = (int) HAL_GPIO_ReadPin(COFF2_CTRL_GPIO_Port, COFF2_CTRL_Pin) == GPIO_PIN_RESET;
-			msg.AppendStr("COFF2 = ", &msg);
+			msg.AppendStr("COFF2 \t\t = ", &msg);
 			break;
 		case tp1:
 			logic = (int) HAL_GPIO_ReadPin(TP1_CTRL_GPIO_Port, TP1_CTRL_Pin) == GPIO_PIN_RESET;
-			msg.AppendStr("TP1 = ", &msg);
+			msg.AppendStr("TP1 \t\t = ", &msg);
 			break;
 		case tp2:
 			logic = (int) HAL_GPIO_ReadPin(TP2_CTRL_GPIO_Port, TP2_CTRL_Pin) == GPIO_PIN_RESET;
-			msg.AppendStr("TP2 = ", &msg);
+			msg.AppendStr("TP2 \t\t = ", &msg);
 			break;
 		default:
 			break;
@@ -449,6 +447,7 @@ void FSM01M1_DIAG_read(DIAG_DeviceTypeDef dev, USART_FormatTypeDef fmt) {
 		else msg.AppendStr("(?)", &msg);
 	}
 
+	msg.AppendStr("\n", &msg);
 	FSM01M1_USART_vCOM_Write(&msg);
 }
 
@@ -459,12 +458,8 @@ void FSM01M1_DIAG_read(DIAG_DeviceTypeDef dev, USART_FormatTypeDef fmt) {
 void FSM01M1_DIAG_levels() {
 	int dev_count = sizeof(devices)/sizeof(DIAG_DeviceTypeDef);
 
-	for(int i = 0; i < dev_count; i += 1) {
+	for(int i = 0; i < dev_count; i += 1)
 		FSM01M1_DIAG_read(devices[i], numerical);
-		if (i < dev_count - 1) {
-			FSM01M1_USART_vCOM_WriteChar(' ');
-		}
-	}
 }
 
 /**
@@ -475,10 +470,6 @@ void FSM01M1_DIAG_levels() {
 void FSM01M1_DIAG_states() {
 	int dev_count = sizeof(devices)/sizeof(DIAG_DeviceTypeDef);
 
-	for(int i = 0; i < dev_count; i += 1) {
+	for(int i = 0; i < dev_count; i += 1)
 		FSM01M1_DIAG_read(devices[i], logical);
-		if (i < dev_count - 1) {
-			FSM01M1_USART_vCOM_WriteChar(' ');
-		}
-	}
 }
