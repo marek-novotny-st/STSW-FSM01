@@ -371,6 +371,7 @@ void FSM01M1_CUTOFF2_CTRL_OFF() {
  * @retval None
  */
 void FSM01M1_TP1_ON() {
+	HAL_NVIC_DisableIRQ(EXTI0_IRQn);
 	HAL_GPIO_WritePin(TP1_CTRL_GPIO_Port, TP1_CTRL_Pin, GPIO_PIN_RESET);
 }
 
@@ -380,6 +381,7 @@ void FSM01M1_TP1_ON() {
  */
 void FSM01M1_TP1_OFF() {
 	HAL_GPIO_WritePin(TP1_CTRL_GPIO_Port, TP1_CTRL_Pin, GPIO_PIN_SET);
+	HAL_NVIC_EnableIRQ(EXTI0_IRQn);
 }
 
 /**
@@ -387,6 +389,7 @@ void FSM01M1_TP1_OFF() {
  * @retval None
  */
 void FSM01M1_TP2_ON() {
+	HAL_NVIC_DisableIRQ(EXTI1_IRQn);
 	HAL_GPIO_WritePin(TP2_CTRL_GPIO_Port, TP2_CTRL_Pin, GPIO_PIN_RESET);
 }
 
@@ -396,6 +399,7 @@ void FSM01M1_TP2_ON() {
  */
 void FSM01M1_TP2_OFF() {
 	HAL_GPIO_WritePin(TP2_CTRL_GPIO_Port, TP2_CTRL_Pin, GPIO_PIN_SET);
+	HAL_NVIC_EnableIRQ(EXTI1_IRQn);
 }
 
 /* SPI communication control */
