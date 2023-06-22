@@ -74,7 +74,7 @@ USART_MessageTypeDef FSM01M1_USART_vCOM_CreateMessage() {
  * @retval None
  */
 void FSM01M1_USART_vCOM_AppendInt(int i, USART_MessageTypeDef * msg) {
-	char iStr[USART_MAX_MSG_LEN];
+	char iStr[USART_MAX_MSG_LEN/2];
 	int len = sprintf(iStr, "%d", i);
 
 	strncat(msg->data, iStr, len);
@@ -87,7 +87,7 @@ void FSM01M1_USART_vCOM_AppendInt(int i, USART_MessageTypeDef * msg) {
  * @retval None
  */
 void FSM01M1_USART_vCOM_AppendFloat(float f, USART_MessageTypeDef * msg) {
-	char fStr[USART_MAX_MSG_LEN];
+	char fStr[USART_MAX_MSG_LEN/2];
 	int len = sprintf(fStr, "%0.2f", (double) f);
 
 	strncat(msg->data, fStr, len);
