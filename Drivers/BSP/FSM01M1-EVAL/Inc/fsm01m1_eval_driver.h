@@ -104,7 +104,7 @@ extern float OUT2_scan;
 #define	FSM01M1_VSENSE_RESCALE_FACTOR		((float) 65.6f/3.6f)
 
 #define FSM01M1_ZERO_VOLTAGE_THRESHOLD		(5.0f)
-#define FSM01M1_NOMINAL_VOLTAGE_THRESHOLD	(22.4f)
+#define FSM01M1_NOMINAL_VOLTAGE_THRESHOLD	(21.6f)
 
 #define FSM01M1_ADC120_DEBOUNCE_TIME_MS		(1)
 
@@ -112,9 +112,6 @@ extern float OUT2_scan;
 
 /* Exported functions --------------------------------------------------------*/
 
-void FSM01M1_TimeLoop_Default(void);
-void FSM01M1_TimeLoop_Short(void);
-void FSM01M1_TimeLoop_Short_div2(void);
 void FSM01M1_system_deactivation(void);
 void FSM01M1_initialization(void);
 

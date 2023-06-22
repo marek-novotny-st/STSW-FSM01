@@ -112,15 +112,24 @@ void FSM01M1_PULSE_DSC_Reset(TIM_HandleTypeDef *htim) {
 	else if (htim->Instance == TIM1) FSM01M1_OUT2_DSC_OFF();
 }
 
-void HAL_TIM_PWM_PulseFinishedCallback(TIM_HandleTypeDef *htim) {
+/**
+ * @brief Callback triggered by end of PWM pulse
+ * @param htim: timer handle
+ * @retval None
+ */
+void FSM01M1_PULSE_PulseFinishedCallback(TIM_HandleTypeDef *htim) {
 	/* turn on discharge path as soon as pulse finishes */
 	if (htim->Instance == TIM4) FSM01M1_OUT1_DSC_ON();
 	else if (htim->Instance == TIM1) FSM01M1_OUT2_DSC_ON();
 }
 
-// TODO: callback is in main.c, create monolithic callback management
-//void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
-//	/* turn off discharge path for new period */
-//	if (htim->Instance == TIM4) FSM01M1_OUT1_DSC_OFF();
-//	else if (htim->Instance == TIM1) FSM01M1_OUT2_DSC_OFF();
-//}
+/**
+ * @brief Callback triggered by elapsed period
+ * @param htim: timer handle
+ * @retval None
+ */
+void FSM01M1_PULSE_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
+	/* turn off discharge path for new period */
+	if (htim->Instance == TIM4) FSM01M1_OUT1_DSC_OFF();
+	else if (htim->Instance == TIM1) FSM01M1_OUT2_DSC_OFF();
+}
