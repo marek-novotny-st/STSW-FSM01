@@ -239,6 +239,7 @@ void FSM01M1_VCC1_DSC_OFF() {
  * @retval None
  */
 void FSM01M1_OUT1_CTRL_ON() {
+	FSM01M1_VCC1_ON();
 	HAL_GPIO_WritePin(OUT1_CTRL_GPIO_Port, OUT1_CTRL_Pin, GPIO_PIN_SET);
 }
 
@@ -319,6 +320,7 @@ void FSM01M1_VCC2_DSC_OFF() {
  * @retval None
  */
 void FSM01M1_OUT2_CTRL_ON() {
+	FSM01M1_VCC2_ON();
 	HAL_GPIO_WritePin(OUT2_CTRL_GPIO_Port, OUT2_CTRL_Pin, GPIO_PIN_SET);
 }
 
@@ -369,6 +371,7 @@ void FSM01M1_CUTOFF2_CTRL_OFF() {
  * @retval None
  */
 void FSM01M1_TP1_ON() {
+	HAL_NVIC_DisableIRQ(EXTI0_IRQn);
 	HAL_GPIO_WritePin(TP1_CTRL_GPIO_Port, TP1_CTRL_Pin, GPIO_PIN_RESET);
 }
 
@@ -378,6 +381,7 @@ void FSM01M1_TP1_ON() {
  */
 void FSM01M1_TP1_OFF() {
 	HAL_GPIO_WritePin(TP1_CTRL_GPIO_Port, TP1_CTRL_Pin, GPIO_PIN_SET);
+	HAL_NVIC_EnableIRQ(EXTI0_IRQn);
 }
 
 /**
@@ -385,6 +389,7 @@ void FSM01M1_TP1_OFF() {
  * @retval None
  */
 void FSM01M1_TP2_ON() {
+	HAL_NVIC_DisableIRQ(EXTI1_IRQn);
 	HAL_GPIO_WritePin(TP2_CTRL_GPIO_Port, TP2_CTRL_Pin, GPIO_PIN_RESET);
 }
 
@@ -394,6 +399,7 @@ void FSM01M1_TP2_ON() {
  */
 void FSM01M1_TP2_OFF() {
 	HAL_GPIO_WritePin(TP2_CTRL_GPIO_Port, TP2_CTRL_Pin, GPIO_PIN_SET);
+	HAL_NVIC_EnableIRQ(EXTI1_IRQn);
 }
 
 /* SPI communication control */
@@ -573,7 +579,10 @@ uint8_t FSM01M1_scan_voltage_vector(SPI_HandleTypeDef *SpiHandle) {
  * @brief Handles user button callback
  * @retval None
  */
-void FSM01M1_B1_USER_activation_callback() {
+__weak void FSM01M1_B1_USER_activation_callback() {
+	/* NOTE: This function Should not be modified, when the callback is needed,
+		           the FSM01M1_OUT2_DIAG_alert_callback could be implemented in the user file
+		   */
 
 	/* Acknowledge eventual dignostic events */
 	FSM01M1_user_LED_red_OFF();
@@ -630,6 +639,9 @@ __weak void FSM01M1_IN1_activation_callback() {
 	/* NOTE: This function Should not be modified, when the callback is needed,
 		           the FSM01M1_IN1_activation_callback could be implemented in the user file
 		   */
+	FSM01M1_user_LED_green_ON();
+	HAL_Delay(350);
+	FSM01M1_user_LED_green_OFF();
 }
 
 /**
@@ -640,6 +652,9 @@ __weak void FSM01M1_IN2_activation_callback() {
 	/* NOTE: This function Should not be modified, when the callback is needed,
 		           the FSM01M1_IN2_activation_callback could be implemented in the user file
 		   */
+	FSM01M1_user_LED_red_ON();
+	HAL_Delay(350);
+	FSM01M1_user_LED_red_OFF();
 }
 
 /**
@@ -668,6 +683,9 @@ __weak void FSM01M1_OUT2_DIAG_alert_callback() {
  * @retval None
  */
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
+	/* NOTE: This function Should not be modified, when the callback is needed,
+		           the FSM01M1_OUT2_DIAG_alert_callback could be implemented in the user file
+		   */
 	switch (GPIO_Pin) {
 		case (B1_USER_Pin): {
 			FSM01M1_B1_USER_activation_callback();

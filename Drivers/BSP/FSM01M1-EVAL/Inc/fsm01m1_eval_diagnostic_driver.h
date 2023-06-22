@@ -55,7 +55,6 @@ typedef enum {
 typedef enum {
 	on,
 	off,
-	read,
 	state,
 	states,
 	level,

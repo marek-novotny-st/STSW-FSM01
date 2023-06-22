@@ -74,7 +74,7 @@ USART_MessageTypeDef FSM01M1_USART_vCOM_CreateMessage() {
  * @retval None
  */
 void FSM01M1_USART_vCOM_AppendInt(int i, USART_MessageTypeDef * msg) {
-	char iStr[USART_MAX_MSG_LEN];
+	char iStr[USART_MAX_MSG_LEN/2];
 	int len = sprintf(iStr, "%d", i);
 
 	strncat(msg->data, iStr, len);
@@ -87,8 +87,8 @@ void FSM01M1_USART_vCOM_AppendInt(int i, USART_MessageTypeDef * msg) {
  * @retval None
  */
 void FSM01M1_USART_vCOM_AppendFloat(float f, USART_MessageTypeDef * msg) {
-	char fStr[USART_MAX_MSG_LEN];
-	int len = sprintf(fStr, "%f", (double) f);
+	char fStr[USART_MAX_MSG_LEN/2];
+	int len = sprintf(fStr, "%0.2f", (double) f);
 
 	strncat(msg->data, fStr, len);
 }
@@ -118,7 +118,7 @@ void FSM01M1_USART_vCOM_Reset(USART_MessageTypeDef * msg) {
  * @retval HAL_StatusTypeDef
  */
 HAL_StatusTypeDef FSM01M1_USART_vCOM_Clear() {
-	char * clr_str = "\e[1;1H\e[2J";
+	char * clr_str = "\x1b[2J\x1b[1;1H";
 	int len = strlen(clr_str);
 	HAL_StatusTypeDef status = HAL_UART_Transmit(p_vCOM, (uint8_t *) clr_str, len, USART_COM_TIMEOUT);
 
