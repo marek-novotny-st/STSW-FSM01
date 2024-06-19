@@ -24,7 +24,10 @@
 /* USER CODE BEGIN Includes */
 #include "fsm01m1_eval_pulse_driver.h"
 #include "fsm01m1_eval_diagnostic_driver.h"
+#include "nucleo_usart_driver.h"
 #include "fsm01m1_eval_driver.h"
+#include "stest01a1_eval_diagnostic_driver.h"
+#include "stest01a1_eval_driver.h"
 #include "fsm01m1_eval_exports.h"
 /* USER CODE END Includes */
 
@@ -47,11 +50,13 @@
 SPI_HandleTypeDef hspi2;
 
 TIM_HandleTypeDef htim1;
+TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim4;
 
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
+
 
 /* USER CODE END PV */
 
@@ -61,6 +66,7 @@ static void MX_GPIO_Init(void);
 static void MX_SPI2_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_TIM1_Init(void);
+static void MX_TIM2_Init(void);
 static void MX_TIM4_Init(void);
 /* USER CODE BEGIN PFP */
 
@@ -68,7 +74,48 @@ static void MX_TIM4_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+void multi_ctrl_loop() {
+	NUCLEO_USART_vCOM_Config(&huart2);
 
+	USART_MessageTypeDef msg = NUCLEO_USART_vCOM_CreateMessage();
+	const USART_MessageTypeDef* p_msg = &msg;
+	USART_MessageTypeDef cmd = NUCLEO_USART_vCOM_CreateMessage();
+	const USART_MessageTypeDef* p_cmd = &cmd;
+
+	STEST01A1_DIAG_InitCmd(p_cmd);
+	STEST01A1_DIAG_InitMsg(p_msg);
+	FSM01M1_DIAG_InitCmd(p_cmd);
+	FSM01M1_DIAG_InitMsg(p_msg);
+
+	msg.Reset(&msg);
+	msg.AppendStr("***** MULTI-BOARD CONTROL TOOL *****\n", &msg);
+	msg.AppendStr("* Type help for usage information", &msg);
+	NUCLEO_USART_vCOM_WriteLine(&msg);
+	NUCLEO_USART_vCOM_WriteChar('\n');
+	msg.Reset(&msg);
+
+	while(1) {
+		if (cmd.flag == ready) {
+//			msg.AppendStr("STEST01A1:", &msg);
+//			NUCLEO_USART_vCOM_WriteLine(&msg);
+//			msg.Reset(&msg);
+
+			STEST01A1_DIAG_resolve(cmd.data, stest01a1_all);
+
+//			msg.AppendStr("FSM01M1:", &msg);
+//			NUCLEO_USART_vCOM_WriteLine(&msg);
+//			msg.Reset(&msg);
+//
+//			FSM01M1_DIAG_resolve(cmd.data, fsm01m1_all);
+
+			cmd.Reset(&cmd);
+			cmd.flag = idle;
+		}
+		if (cmd.flag == idle) {
+			NUCLEO_USART_vCOM_ReadLine(&cmd);
+		}
+	}
+}
 /* USER CODE END 0 */
 
 /**
@@ -77,6 +124,7 @@ static void MX_TIM4_Init(void);
   */
 int main(void)
 {
+
   /* USER CODE BEGIN 1 */
 
   /* USER CODE END 1 */
@@ -102,6 +150,7 @@ int main(void)
   MX_SPI2_Init();
   MX_USART2_UART_Init();
   MX_TIM1_Init();
+  MX_TIM2_Init();
   MX_TIM4_Init();
   /* USER CODE BEGIN 2 */
 
@@ -185,12 +234,12 @@ int main(void)
 //  FSM01M1_PULSE_PulseGen_TIM_Start(&htim4, TIM_CHANNEL_3);
 
   /* Main loop */
-//  HAL_TIM_Base_Start_IT(&htim1);
+  HAL_TIM_Base_Start_IT(&htim1);
+//  HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_2);
 //  FSM01M1_DIAG_IO_Loop(&huart2);
-//  while (1) {};
 
-  while(1) {
-
+  multi_ctrl_loop();
+  while (1) {
 	  /* USER_LED_GREEN test */
 	  FSM01M1_user_LED_green_ON();
 //	  FSM01M1_TimeLoop_Short();
@@ -410,6 +459,64 @@ static void MX_TIM4_Init(void)
 }
 
 /**
+  * @brief TIM2 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_TIM2_Init(void)
+{
+
+  /* USER CODE BEGIN TIM2_Init 0 */
+
+  /* USER CODE END TIM2_Init 0 */
+
+  TIM_ClockConfigTypeDef sClockSourceConfig = {0};
+  TIM_MasterConfigTypeDef sMasterConfig = {0};
+  TIM_IC_InitTypeDef sConfigIC = {0};
+
+  /* USER CODE BEGIN TIM2_Init 1 */
+
+  /* USER CODE END TIM2_Init 1 */
+  htim2.Instance = TIM2;
+  htim2.Init.Prescaler = 0;
+  htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim2.Init.Period = 4294967295;
+  htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_Base_Init(&htim2) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
+  if (HAL_TIM_ConfigClockSource(&htim2, &sClockSourceConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  if (HAL_TIM_IC_Init(&htim2) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim2, &sMasterConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sConfigIC.ICPolarity = TIM_INPUTCHANNELPOLARITY_RISING;
+  sConfigIC.ICSelection = TIM_ICSELECTION_DIRECTTI;
+  sConfigIC.ICPrescaler = TIM_ICPSC_DIV1;
+  sConfigIC.ICFilter = 0;
+  if (HAL_TIM_IC_ConfigChannel(&htim2, &sConfigIC, TIM_CHANNEL_2) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN TIM2_Init 2 */
+
+  /* USER CODE END TIM2_Init 2 */
+
+}
+
+/**
   * @brief USART2 Initialization Function
   * @param None
   * @retval None
@@ -461,8 +568,8 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOD_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOC, D12_USER_LED_GREEN_Pin|D13_USER_LED_RED_Pin|COFF2_CTRL_Pin|VCC1_DSC_Pin
-                          |OUT2_DSC_Pin|OUT1_DSC_Pin|VCC2_DSC_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOC, D12_USER_LED_GREEN_Pin|D13_USER_LED_RED_Pin|COFF2_CTRL_Pin|OUT_CTRL_Pin
+                          |VCC1_DSC_Pin|OUT2_DSC_Pin|OUT1_DSC_Pin|VCC2_DSC_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOA, LD2_USER_Pin|VCC1_CTRL_Pin|TP1_CTRL_Pin, GPIO_PIN_RESET);
@@ -491,10 +598,10 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(OUTP1_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : D12_USER_LED_GREEN_Pin D13_USER_LED_RED_Pin COFF2_CTRL_Pin VCC1_DSC_Pin
-                           OUT2_DSC_Pin OUT1_DSC_Pin VCC2_DSC_Pin */
-  GPIO_InitStruct.Pin = D12_USER_LED_GREEN_Pin|D13_USER_LED_RED_Pin|COFF2_CTRL_Pin|VCC1_DSC_Pin
-                          |OUT2_DSC_Pin|OUT1_DSC_Pin|VCC2_DSC_Pin;
+  /*Configure GPIO pins : D12_USER_LED_GREEN_Pin D13_USER_LED_RED_Pin COFF2_CTRL_Pin OUT_CTRL_Pin
+                           VCC1_DSC_Pin OUT2_DSC_Pin OUT1_DSC_Pin VCC2_DSC_Pin */
+  GPIO_InitStruct.Pin = D12_USER_LED_GREEN_Pin|D13_USER_LED_RED_Pin|COFF2_CTRL_Pin|OUT_CTRL_Pin
+                          |VCC1_DSC_Pin|OUT2_DSC_Pin|OUT1_DSC_Pin|VCC2_DSC_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -506,6 +613,12 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : OUT_FLT1_Pin OUT_FLT2_Pin */
+  GPIO_InitStruct.Pin = OUT_FLT1_Pin|OUT_FLT2_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
   /*Configure GPIO pin : SPI_NCS_Pin */
   GPIO_InitStruct.Pin = SPI_NCS_Pin;
@@ -534,6 +647,9 @@ static void MX_GPIO_Init(void)
 
   HAL_NVIC_SetPriority(EXTI1_IRQn, 1, 0);
   HAL_NVIC_EnableIRQ(EXTI1_IRQn);
+
+  HAL_NVIC_SetPriority(EXTI4_IRQn, 1, 0);
+  HAL_NVIC_EnableIRQ(EXTI4_IRQn);
 
   HAL_NVIC_SetPriority(EXTI9_5_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
