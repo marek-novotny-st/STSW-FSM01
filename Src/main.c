@@ -25,6 +25,7 @@
 #include "fsm01m1_eval_pulse_driver.h"
 #include "fsm01m1_eval_diagnostic_driver.h"
 #include "fsm01m1_eval_driver.h"
+#include "fsm01m1_eval_exports.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -123,69 +124,79 @@ int main(void)
   FSM01M1_VCC2_ON();
 
   /* visual led test */
-  FSM01M1_PULSE_PulseGen_TIM_Config(&htim4, TIM4, TIM_CHANNEL_3, 1, 65535, 25000);
-  FSM01M1_PULSE_PulseGen_TIM_Start(&htim4, TIM_CHANNEL_3);
-  HAL_Delay(500);
-  FSM01M1_PULSE_PulseGen_TIM_Stop(&htim4, TIM_CHANNEL_3);
-
-  FSM01M1_PULSE_PulseGen_TIM_Config(&htim4, TIM4, TIM_CHANNEL_3, 1, 65535, 50000);
-  FSM01M1_PULSE_PulseGen_TIM_Start(&htim4, TIM_CHANNEL_3);
-  HAL_Delay(500);
-  FSM01M1_PULSE_PulseGen_TIM_Stop(&htim4, TIM_CHANNEL_3);
-
-  /* positive test pulse */
-  FSM01M1_PULSE_PulseGen_TIM_Config(&htim4, TIM4, TIM_CHANNEL_3, 1, 300, 50);
-  FSM01M1_PULSE_PulseGen_TIM_Start(&htim4, TIM_CHANNEL_3);
-  HAL_Delay(500);
-  FSM01M1_PULSE_PulseGen_TIM_Stop(&htim4, TIM_CHANNEL_3);
-  // with discharge
-  FSM01M1_PULSE_PulseGen_TIM_Start_IT(&htim4, TIM_CHANNEL_3);
-  HAL_Delay(500);
-  FSM01M1_PULSE_PulseGen_TIM_Stop_IT(&htim4, TIM_CHANNEL_3);
-
-  /* negative test pulse */
-  FSM01M1_PULSE_PulseGen_TIM_Config(&htim4, TIM4, TIM_CHANNEL_3, 1, 300, 250);
-  FSM01M1_PULSE_PulseGen_TIM_Start(&htim4, TIM_CHANNEL_3);
-  HAL_Delay(500);
-  FSM01M1_PULSE_PulseGen_TIM_Stop(&htim4, TIM_CHANNEL_3);
-  // with discharge
-  FSM01M1_PULSE_PulseGen_TIM_Start_IT(&htim4, TIM_CHANNEL_3);
-  HAL_Delay(500);
-  FSM01M1_PULSE_PulseGen_TIM_Stop_IT(&htim4, TIM_CHANNEL_3);
-
-  /* C/D interface Class 1 */
-  // positive
-  FSM01M1_PULSE_PulseGen_TIM_Config(&htim4, TIM4, TIM_CHANNEL_3, 1, 10000, 100);
-  FSM01M1_PULSE_PulseGen_TIM_Start(&htim4, TIM_CHANNEL_3);
-  HAL_Delay(500);
-  FSM01M1_PULSE_PulseGen_TIM_Stop(&htim4, TIM_CHANNEL_3);
-  // with discharge
-  FSM01M1_PULSE_PulseGen_TIM_Start_IT(&htim4, TIM_CHANNEL_3);
-  HAL_Delay(500);
-  FSM01M1_PULSE_PulseGen_TIM_Stop_IT(&htim4, TIM_CHANNEL_3);
-  // negative
-  FSM01M1_PULSE_PulseGen_TIM_Config(&htim4, TIM4, TIM_CHANNEL_3, 1, 10000, 9900);
-  FSM01M1_PULSE_PulseGen_TIM_Start(&htim4, TIM_CHANNEL_3);
-  HAL_Delay(500);
-  FSM01M1_PULSE_PulseGen_TIM_Stop(&htim4, TIM_CHANNEL_3);
-  // with discharge
-  FSM01M1_PULSE_PulseGen_TIM_Start_IT(&htim4, TIM_CHANNEL_3);
-  HAL_Delay(500);
-  FSM01M1_PULSE_PulseGen_TIM_Stop_IT(&htim4, TIM_CHANNEL_3);
+//  HAL_GPIO_TogglePin(OUT2_CTRL_GPIO_Port, OUT2_CTRL_Pin);
+//
+//  FSM01M1_PULSE_PulseGen_TIM_Config(&htim1, OUT2_TIM, OUT2_TIM_CHANNEL, 1, 65535, 25000);
+//  FSM01M1_PULSE_PulseGen_TIM_Start(&htim1, OUT2_TIM_CHANNEL);
+//  HAL_Delay(500);
+//  FSM01M1_PULSE_PulseGen_TIM_Stop(&htim1, OUT2_TIM_CHANNEL);
+//
+//  FSM01M1_PULSE_PulseGen_TIM_Config(&htim4, TIM4, TIM_CHANNEL_3, 1, 65535, 25000);
+//  FSM01M1_PULSE_PulseGen_TIM_Start(&htim4, TIM_CHANNEL_3);
+//  HAL_Delay(500);
+//  FSM01M1_PULSE_PulseGen_TIM_Stop(&htim4, TIM_CHANNEL_3);
+//
+//  FSM01M1_PULSE_PulseGen_TIM_Config(&htim4, TIM4, TIM_CHANNEL_3, 1, 65535, 50000);
+//  FSM01M1_PULSE_PulseGen_TIM_Start(&htim4, TIM_CHANNEL_3);
+//  HAL_Delay(500);
+//  FSM01M1_PULSE_PulseGen_TIM_Stop(&htim4, TIM_CHANNEL_3);
+//
+//  /* positive test pulse */
+//  FSM01M1_PULSE_PulseGen_TIM_Config(&htim4, TIM4, TIM_CHANNEL_3, 1, 300, 50);
+//  FSM01M1_PULSE_PulseGen_TIM_Start(&htim4, TIM_CHANNEL_3);
+//  HAL_Delay(500);
+//  FSM01M1_PULSE_PulseGen_TIM_Stop(&htim4, TIM_CHANNEL_3);
+//  // with discharge
+//  FSM01M1_PULSE_PulseGen_TIM_Start_IT(&htim4, TIM_CHANNEL_3);
+//  HAL_Delay(500);
+//  FSM01M1_PULSE_PulseGen_TIM_Stop_IT(&htim4, TIM_CHANNEL_3);
+//
+//  /* negative test pulse */
+//  FSM01M1_PULSE_PulseGen_TIM_Config(&htim4, TIM4, TIM_CHANNEL_3, 1, 300, 250);
+//  FSM01M1_PULSE_PulseGen_TIM_Start(&htim4, TIM_CHANNEL_3);
+//  HAL_Delay(500);
+//  FSM01M1_PULSE_PulseGen_TIM_Stop(&htim4, TIM_CHANNEL_3);
+//  // with discharge
+//  FSM01M1_PULSE_PulseGen_TIM_Start_IT(&htim4, TIM_CHANNEL_3);
+//  HAL_Delay(500);
+//  FSM01M1_PULSE_PulseGen_TIM_Stop_IT(&htim4, TIM_CHANNEL_3);
+//
+//  /* C/D interface Class 1 */
+//  // positive
+//  FSM01M1_PULSE_PulseGen_TIM_Config(&htim4, TIM4, TIM_CHANNEL_3, 1, 10000, 100);
+//  FSM01M1_PULSE_PulseGen_TIM_Start(&htim4, TIM_CHANNEL_3);
+//  HAL_Delay(500);
+//  FSM01M1_PULSE_PulseGen_TIM_Stop(&htim4, TIM_CHANNEL_3);
+//  // with discharge
+//  FSM01M1_PULSE_PulseGen_TIM_Start_IT(&htim4, TIM_CHANNEL_3);
+//  HAL_Delay(500);
+//  FSM01M1_PULSE_PulseGen_TIM_Stop_IT(&htim4, TIM_CHANNEL_3);
+//  // negative
+//  FSM01M1_PULSE_PulseGen_TIM_Config(&htim4, TIM4, TIM_CHANNEL_3, 1, 10000, 9900);
+//  FSM01M1_PULSE_PulseGen_TIM_Start(&htim4, TIM_CHANNEL_3);
+//  HAL_Delay(500);
+//  FSM01M1_PULSE_PulseGen_TIM_Stop(&htim4, TIM_CHANNEL_3);
+//  // with discharge
+//  FSM01M1_PULSE_PulseGen_TIM_Start_IT(&htim4, TIM_CHANNEL_3);
+//  HAL_Delay(500);
+//  FSM01M1_PULSE_PulseGen_TIM_Stop_IT(&htim4, TIM_CHANNEL_3);
+//
+//  FSM01M1_PULSE_PulseGen_TIM_Config(&htim4, TIM4, TIM_CHANNEL_3, 1, 65535, 0);
+//  FSM01M1_PULSE_PulseGen_TIM_Start(&htim4, TIM_CHANNEL_3);
 
   /* Main loop */
-  HAL_TIM_Base_Start_IT(&htim1);
-  FSM01M1_DIAG_IO_Loop(&huart2);
-  while (1) {};
+//  HAL_TIM_Base_Start_IT(&htim1);
+//  FSM01M1_DIAG_IO_Loop(&huart2);
+//  while (1) {};
 
   while(1) {
 
 	  /* USER_LED_GREEN test */
 	  FSM01M1_user_LED_green_ON();
-	  FSM01M1_TimeLoop_Short();
+//	  FSM01M1_TimeLoop_Short();
 
 	  FSM01M1_user_LED_green_OFF();
-	  FSM01M1_TimeLoop_Short();
+//	  FSM01M1_TimeLoop_Short();
 
 	  FSM01M1_DIAG_IO_Loop(&huart2);
   }
@@ -289,6 +300,8 @@ static void MX_TIM1_Init(void)
 
   TIM_ClockConfigTypeDef sClockSourceConfig = {0};
   TIM_MasterConfigTypeDef sMasterConfig = {0};
+  TIM_OC_InitTypeDef sConfigOC = {0};
+  TIM_BreakDeadTimeConfigTypeDef sBreakDeadTimeConfig = {0};
 
   /* USER CODE BEGIN TIM1_Init 1 */
 
@@ -309,15 +322,41 @@ static void MX_TIM1_Init(void)
   {
     Error_Handler();
   }
+  if (HAL_TIM_PWM_Init(&htim1) != HAL_OK)
+  {
+    Error_Handler();
+  }
   sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
   sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
   if (HAL_TIMEx_MasterConfigSynchronization(&htim1, &sMasterConfig) != HAL_OK)
   {
     Error_Handler();
   }
+  sConfigOC.OCMode = TIM_OCMODE_PWM1;
+  sConfigOC.Pulse = 0;
+  sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
+  sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
+  sConfigOC.OCIdleState = TIM_OCIDLESTATE_RESET;
+  sConfigOC.OCNIdleState = TIM_OCNIDLESTATE_RESET;
+  if (HAL_TIM_PWM_ConfigChannel(&htim1, &sConfigOC, TIM_CHANNEL_4) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sBreakDeadTimeConfig.OffStateRunMode = TIM_OSSR_DISABLE;
+  sBreakDeadTimeConfig.OffStateIDLEMode = TIM_OSSI_DISABLE;
+  sBreakDeadTimeConfig.LockLevel = TIM_LOCKLEVEL_OFF;
+  sBreakDeadTimeConfig.DeadTime = 0;
+  sBreakDeadTimeConfig.BreakState = TIM_BREAK_DISABLE;
+  sBreakDeadTimeConfig.BreakPolarity = TIM_BREAKPOLARITY_HIGH;
+  sBreakDeadTimeConfig.AutomaticOutput = TIM_AUTOMATICOUTPUT_DISABLE;
+  if (HAL_TIMEx_ConfigBreakDeadTime(&htim1, &sBreakDeadTimeConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
   /* USER CODE BEGIN TIM1_Init 2 */
 
   /* USER CODE END TIM1_Init 2 */
+  HAL_TIM_MspPostInit(&htim1);
 
 }
 
@@ -340,7 +379,7 @@ static void MX_TIM4_Init(void)
 
   /* USER CODE END TIM4_Init 1 */
   htim4.Instance = TIM4;
-  htim4.Init.Prescaler = 16;
+  htim4.Init.Prescaler = 0;
   htim4.Init.CounterMode = TIM_COUNTERMODE_UP;
   htim4.Init.Period = 65535;
   htim4.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
@@ -356,7 +395,7 @@ static void MX_TIM4_Init(void)
     Error_Handler();
   }
   sConfigOC.OCMode = TIM_OCMODE_PWM1;
-  sConfigOC.Pulse = 65535;
+  sConfigOC.Pulse = 0;
   sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
   sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
   if (HAL_TIM_PWM_ConfigChannel(&htim4, &sConfigOC, TIM_CHANNEL_3) != HAL_OK)
@@ -411,6 +450,8 @@ static void MX_USART2_UART_Init(void)
 static void MX_GPIO_Init(void)
 {
   GPIO_InitTypeDef GPIO_InitStruct = {0};
+/* USER CODE BEGIN MX_GPIO_Init_1 */
+/* USER CODE END MX_GPIO_Init_1 */
 
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOC_CLK_ENABLE();
@@ -424,7 +465,7 @@ static void MX_GPIO_Init(void)
                           |OUT2_DSC_Pin|OUT1_DSC_Pin|VCC2_DSC_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, LD2_USER_Pin|OUT2_CTRL_Pin|VCC1_CTRL_Pin|TP1_CTRL_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, LD2_USER_Pin|VCC1_CTRL_Pin|TP1_CTRL_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, SPI_NCS_Pin|TP2_CTRL_Pin|VCC2_CTRL_Pin, GPIO_PIN_RESET);
@@ -459,8 +500,8 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : LD2_USER_Pin OUT2_CTRL_Pin VCC1_CTRL_Pin TP1_CTRL_Pin */
-  GPIO_InitStruct.Pin = LD2_USER_Pin|OUT2_CTRL_Pin|VCC1_CTRL_Pin|TP1_CTRL_Pin;
+  /*Configure GPIO pins : LD2_USER_Pin VCC1_CTRL_Pin TP1_CTRL_Pin */
+  GPIO_InitStruct.Pin = LD2_USER_Pin|VCC1_CTRL_Pin|TP1_CTRL_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -500,6 +541,8 @@ static void MX_GPIO_Init(void)
   HAL_NVIC_SetPriority(EXTI15_10_IRQn, 1, 0);
   HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
 
+/* USER CODE BEGIN MX_GPIO_Init_2 */
+/* USER CODE END MX_GPIO_Init_2 */
 }
 
 /* USER CODE BEGIN 4 */

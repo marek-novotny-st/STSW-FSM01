@@ -19,9 +19,12 @@
 
 #include "fsm01m1_eval_pulse_driver.h"
 #include "fsm01m1_eval_driver.h"
-#include "main.h"
+#include "fsm01m1_eval_exports.h"
 
 #define MICROS 1000000
+
+//#define OUT1_TIM_HANDLE &htim4
+//#define OUT2_TIM_HANDLE &htim1
 
 void FSM01M1_PULSE_DSC_Reset(TIM_HandleTypeDef * htim);
 
@@ -33,7 +36,7 @@ void FSM01M1_PULSE_DSC_Reset(TIM_HandleTypeDef * htim);
  * @param Time_Base: duration of a tick in microseconds
  * @param Period_Ticks: duration of a period in ticks
  * @param Pulse_Ticks: duration of a pulse in ticks
- * @retval None
+ * @retval HAL_StatusTypeDef
  */
 HAL_StatusTypeDef FSM01M1_PULSE_PulseGen_TIM_Config(TIM_HandleTypeDef * htim, TIM_TypeDef * TIM, uint32_t Channel, uint32_t Time_Base, uint32_t Period_Ticks, uint32_t Pulse_Ticks) {
 	/* Clock section */
@@ -61,11 +64,14 @@ HAL_StatusTypeDef FSM01M1_PULSE_PulseGen_TIM_Config(TIM_HandleTypeDef * htim, TI
 			break;
 		case TIM_CHANNEL_4:
 			TIM->CCR4 = Pulse_Ticks;
+			break;
 		default:
 			Error_Handler();
 			break;
 	}
 	__HAL_UNLOCK(htim);
+
+	return HAL_OK;
 }
 
 /**
@@ -100,6 +106,64 @@ void FSM01M1_PULSE_PulseGen_TIM_Start_IT(TIM_HandleTypeDef * htim, uint32_t chan
 	FSM01M1_PULSE_DSC_Reset(htim);
 	HAL_TIM_Base_Start_IT(htim);
 	HAL_TIM_PWM_Start_IT(htim, channel);
+}
+
+/**
+ * @brief sets pulse generating timer high
+ * @param tmr: timer name
+ * @retval None
+ */
+void FSM01M1_PULSE_PulseGen_TIM_High(PulseGen_TMR tmr) {
+	switch (tmr) {
+		case OUT1_TMR:
+			FSM01M1_PULSE_PulseGen_TIM_Config(OUT1_TIM_HANDLE, OUT1_TIM, OUT1_TIM_CHANNEL, 1, 1, 1);
+			FSM01M1_PULSE_PulseGen_TIM_Start(OUT1_TIM_HANDLE, OUT1_TIM_CHANNEL);
+			break;
+		case OUT2_TMR:
+			FSM01M1_PULSE_PulseGen_TIM_Config(OUT2_TIM_HANDLE, OUT2_TIM, OUT2_TIM_CHANNEL, 1, 1, 1);
+			FSM01M1_PULSE_PulseGen_TIM_Start(OUT2_TIM_HANDLE, OUT2_TIM_CHANNEL);
+			break;
+		default:
+			// informative message
+			break;
+	}
+}
+
+/**
+ * @brief sets pulse generating timer low
+ * @param tmr: timer name
+ * @retval None
+ */
+void FSM01M1_PULSE_PulseGen_TIM_Low(PulseGen_TMR tmr) {
+	switch (tmr) {
+		case OUT1_TMR:
+			FSM01M1_PULSE_PulseGen_TIM_Config(OUT1_TIM_HANDLE, OUT1_TIM, OUT1_TIM_CHANNEL, 1, 1, 0);
+			FSM01M1_PULSE_PulseGen_TIM_Start(OUT1_TIM_HANDLE, OUT1_TIM_CHANNEL);
+			break;
+		case OUT2_TMR:
+			FSM01M1_PULSE_PulseGen_TIM_Config(OUT2_TIM_HANDLE, OUT2_TIM, OUT2_TIM_CHANNEL, 1, 1, 0);
+			FSM01M1_PULSE_PulseGen_TIM_Start(OUT2_TIM_HANDLE, OUT2_TIM_CHANNEL);
+			break;
+		default:
+			// informative message
+			break;
+	}
+}
+
+/**
+ * @brief sets custom pulse generating timer
+ * @param handle: timer handle
+ * @param tmr: timer designator
+ * @param channel: timer channel
+ * @param tick: tick duration in microseconds
+ * @param period_ticks: number of ticks in a period
+ * @param pulse ticks: number of ticks in a pulse
+ * @retval None
+ */
+void FSM01M1_PULSE_PulseGen_TIM_IT(TIM_HandleTypeDef * handle, TIM_TypeDef * tmr, uint32_t channel, uint32_t tick, uint32_t period_ticks, uint32_t pulse_ticks) {
+	FSM01M1_PULSE_PulseGen_TIM_Config(handle, tmr, channel, tick, period_ticks,
+			pulse_ticks);
+	FSM01M1_PULSE_PulseGen_TIM_Start_IT(handle, channel);
 }
 
 /**
