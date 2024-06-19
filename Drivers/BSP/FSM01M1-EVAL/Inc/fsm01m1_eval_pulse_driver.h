@@ -1,9 +1,21 @@
-/*
- * fsm01m1_eval_pulse_driver.h
- *
- *  Created on: Jan 18, 2023
- *      Author: marek novotny
- */
+/**
+  ******************************************************************************
+  * @file    fsm01m1_eval_pulse_driver.h
+  * @author  ST Power Application Laboratory
+  * @version V1.0.0
+  * @brief   Provides functions for programmable pulse generation
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright (c) 2023 STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  ******************************************************************************
+  */
 
 #ifndef BSP_FSM01M1_EVAL_INC_FSM01M1_EVAL_PULSE_DRIVER_H_
 #define BSP_FSM01M1_EVAL_INC_FSM01M1_EVAL_PULSE_DRIVER_H_

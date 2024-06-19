@@ -78,6 +78,7 @@ void FSM01M1_DIAG_switch(DIAG_DeviceTypeDef dev, DIAG_ActionTypeDef act);
 void FSM01M1_DIAG_resolve(char * cmd, DIAG_DeviceTypeDef target);
 void FSM01M1_DIAG_levels();
 void FSM01M1_DIAG_states();
+void FSM01M1_DIAG_pulse_config(DIAG_DeviceTypeDef dev, char * config_str);
 
 /* Exported functions --------------------------------------------------------*/
 
@@ -275,6 +276,7 @@ void FSM01M1_DIAG_resolve(char * cmd, DIAG_DeviceTypeDef target) {
 	else if (strcmp(arg, "functions") == 0) FSM01M1_DIAG_list_devices();
 	else if (strcmp(arg, "actions") == 0) FSM01M1_DIAG_list_actions();
 	else if (strcmp(arg, "clear") == 0) FSM01M1_USART_vCOM_Clear();
+//	else if (strcmp(arg, "pulse_config") == 0) FSM01M1_
 	else {
 		msg.Reset(&msg);
 		msg.AppendStr("Invalid command, no actions performed", &msg);
@@ -472,4 +474,12 @@ void FSM01M1_DIAG_states() {
 
 	for(int i = 0; i < dev_count; i += 1)
 		FSM01M1_DIAG_read(devices[i], logical);
+}
+
+void FSM01M1_DIAG_pulse_config(DIAG_DeviceTypeDef dev, char * config_str) {
+	char * val = "";
+	while (val != NULL) {
+		val = strtok(config_str, ',');
+
+	}
 }
