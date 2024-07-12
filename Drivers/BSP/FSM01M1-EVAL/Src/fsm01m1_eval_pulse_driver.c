@@ -17,9 +17,9 @@
   ******************************************************************************
   */
 
+#include "nucleo_exports.h"
 #include "fsm01m1_eval_pulse_driver.h"
 #include "fsm01m1_eval_driver.h"
-#include "fsm01m1_eval_exports.h"
 
 #define MICROS 1000000
 
@@ -113,7 +113,7 @@ void FSM01M1_PULSE_PulseGen_TIM_Start_IT(TIM_HandleTypeDef * htim, uint32_t chan
  * @param tmr: timer name
  * @retval None
  */
-void FSM01M1_PULSE_PulseGen_TIM_High(PulseGen_TMR tmr) {
+void FSM01M1_PULSE_PulseGen_TIM_High(FSM01M1_PulseGen_TMR tmr) {
 	switch (tmr) {
 		case OUT1_TMR:
 			FSM01M1_PULSE_PulseGen_TIM_Config(OUT1_TIM_HANDLE, OUT1_TIM, OUT1_TIM_CHANNEL, 1, 1, 1);
@@ -134,7 +134,7 @@ void FSM01M1_PULSE_PulseGen_TIM_High(PulseGen_TMR tmr) {
  * @param tmr: timer name
  * @retval None
  */
-void FSM01M1_PULSE_PulseGen_TIM_Low(PulseGen_TMR tmr) {
+void FSM01M1_PULSE_PulseGen_TIM_Low(FSM01M1_PulseGen_TMR tmr) {
 	switch (tmr) {
 		case OUT1_TMR:
 			FSM01M1_PULSE_PulseGen_TIM_Config(OUT1_TIM_HANDLE, OUT1_TIM, OUT1_TIM_CHANNEL, 1, 1, 0);

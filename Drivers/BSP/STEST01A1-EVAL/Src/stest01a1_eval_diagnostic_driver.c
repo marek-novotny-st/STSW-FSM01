@@ -19,66 +19,54 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stest01a1_eval_diagnostic_driver.h"
+#include "stest01a1_eval_pulse_driver.h"
 #include "stest01a1_eval_driver.h"
 #include "nucleo_usart_driver.h"
-//#include "strtok_r.h"
-#include "string.h"
+#include <string.h>
 #include <math.h>
 
 /* Private typedef -----------------------------------------------------------*/
-typedef enum {
+typedef enum DIAG_Device_t {
+	all,
+	out,
+	flt1,
+	flt2
+} DIAG_DeviceTypeDef;
+
+typedef enum DIAG_Action_t {
 	on,
 	off,
 	state,
 	states,
 	level,
 	levels
-} STEST01A1_DIAG_ActionTypeDef;
+} DIAG_ActionTypeDef;
 
 
-typedef enum USART_Format_t {
+typedef enum DIAG_Format_t {
 	numerical,
 	logical
-} USART_FormatTypeDef;
+} DIAG_FormatTypeDef;
 
 /* Private variables ---------------------------------------------------------*/
 
 /* buffer for command tokenization */
 static char * token_ctx;
 
-/* registered devices */
-static STEST01A1_DIAG_DeviceTypeDef devices[1] = {
-		stest01a1_out
-};
-
-static STEST01A1_DIAG_DeviceTypeDef outputs[1] = { stest01a1_out };
-
-//STEST01A1_DIAG_DeviceTypeDef sources[3] = { vcc };
-
-/* registered actions */
-static STEST01A1_DIAG_ActionTypeDef actions[6] = {
-		on,
-		off,
-		state,
-		states,
-		level,
-		levels
-};
-
 static USART_MessageTypeDef cmd;
 static USART_MessageTypeDef msg;
 /* Private function prototypes -----------------------------------------------*/
 void STEST01A1_DIAG_splash_msg();
-void STEST01A1_DIAG_read(STEST01A1_DIAG_DeviceTypeDef dev, USART_FormatTypeDef fmt);
+void STEST01A1_DIAG_read(DIAG_DeviceTypeDef dev, DIAG_FormatTypeDef fmt);
 void STEST01A1_DIAG_reset_devices();
-void STEST01A1_DIAG_switch(STEST01A1_DIAG_DeviceTypeDef dev, STEST01A1_DIAG_ActionTypeDef act);
-void STEST01A1_DIAG_resolve(char * cmd, STEST01A1_DIAG_DeviceTypeDef target);
+void STEST01A1_DIAG_switch(DIAG_DeviceTypeDef dev, DIAG_ActionTypeDef act);
+void STEST01A1_DIAG_resolve(char * cmd, DIAG_DeviceTypeDef target);
 void STEST01A1_DIAG_levels();
 void STEST01A1_DIAG_states();
 void STEST01A1_DIAG_help();
 void STEST01A1_DIAG_list_devices();
 void STEST01A1_DIAG_list_actions();
-void STEST01A1_DIAG_single_pulse(STEST01A1_DIAG_DeviceTypeDef dev, uint32_t duration);
+void STEST01A1_DIAG_single_pulse(DIAG_DeviceTypeDef dev, uint32_t duration);
 void STEST01A1_DIAG_demag_stat();
 
 /* Exported functions --------------------------------------------------------*/
@@ -96,7 +84,9 @@ void STEST01A1_DIAG_IO_Loop(UART_HandleTypeDef * huart) {
 	STEST01A1_DIAG_splash_msg();
 	while(1) {
 		if (cmd.flag == ready) {
-			STEST01A1_DIAG_resolve(cmd.data, stest01a1_all);
+			if (strncmp(cmd.data, "stest01a1_", 10) != 0) return;
+
+			STEST01A1_DIAG_resolve(cmd.data, all);
 			cmd.Reset(&cmd);
 			cmd.flag = idle;
 		}
@@ -112,20 +102,30 @@ void STEST01A1_DIAG_IO_Loop(UART_HandleTypeDef * huart) {
  * @param target: device
  * @retval None
  */
-void STEST01A1_DIAG_resolve(char * cmd, STEST01A1_DIAG_DeviceTypeDef target) {
+void STEST01A1_DIAG_resolve(char * cmd, DIAG_DeviceTypeDef target) {
 	if (cmd[0] == '\r' || cmd[0] == '\n') cmd = cmd + 1;
 	char * arg = (char *) strtok_r(cmd, " ", &token_ctx);
 
 	if (arg == NULL) return;
 	arg[strcspn(arg, "\r\n")] = '\0';
+	arg = &arg[strspn(arg, "stest01a1_")];
 
 	if (arg[0] == '\0') return;
-	else if (strcmp(arg, "out") == 0) STEST01A1_DIAG_resolve(NULL, stest01a1_out);
-	else if (strcmp(arg, "flt1") == 0) STEST01A1_DIAG_resolve(NULL, stest01a1_flt1);
-	else if (strcmp(arg, "flt2") == 0) STEST01A1_DIAG_resolve(NULL, stest01a1_flt2);
+	else if (strcmp(arg, "out") == 0) STEST01A1_DIAG_resolve(NULL, out);
+	else if (strcmp(arg, "flt1") == 0) STEST01A1_DIAG_resolve(NULL, flt1);
+	else if (strcmp(arg, "flt2") == 0) STEST01A1_DIAG_resolve(NULL, flt2);
 	else if (strcmp(arg, "demag_stat") == 0) STEST01A1_DIAG_demag_stat();
-	else if (strcmp(arg, "on") == 0) STEST01A1_DIAG_switch(target, on);
-	else if (strcmp(arg, "off") == 0) STEST01A1_DIAG_switch(target, off);
+	else if (strcmp(arg, "on") == 0) STEST01A1_PULSE_PulseGen_TIM_High(OUT_TMR);
+	else if (strcmp(arg, "off") == 0) STEST01A1_PULSE_PulseGen_TIM_Low(OUT_TMR);
+	else if (strcmp(arg, "pulse") == 0) {
+		STEST01A1_PULSE_PulseGen_TIM_High(OUT_TMR);
+		HAL_Delay(1000);
+		STEST01A1_PULSE_PulseGen_TIM_Low(OUT_TMR);
+	}
+	else if (strcmp(arg, "pwm") == 0) {
+		STEST01A1_PULSE_PulseGen_TIM_Config(OUT_TIM_HANDLE, OUT_TIM, OUT_TIM_CHANNEL, 1000, 500, 200);
+		STEST01A1_PULSE_PulseGen_TIM_Start(OUT_TIM_HANDLE, OUT_TIM_CHANNEL);
+	}
 	else if (strcmp(arg, "single") == 0) STEST01A1_DIAG_single_pulse(target, 1000);
 	else if (strcmp(arg, "state") == 0) STEST01A1_DIAG_read(target, logical);
 	else if (strcmp(arg, "level") == 0) STEST01A1_DIAG_read(target, numerical);
@@ -140,24 +140,6 @@ void STEST01A1_DIAG_resolve(char * cmd, STEST01A1_DIAG_DeviceTypeDef target) {
 		msg.AppendStr("Invalid command, no actions performed", &msg);
 		NUCLEO_USART_vCOM_WriteLine(&msg);
 	}
-}
-
-/**
- * @brief Initializes command data structure
- * @param constant pointer to command data structure
- * @retval const USART_MessageTypeDef*
- */
-void STEST01A1_DIAG_InitCmd(const USART_MessageTypeDef* p_cmd) {
-	cmd = *p_cmd;
-}
-
-/**
- * @brief Initializes message data structure
- * @param constant pointer to message structure
- * @retval const USART_MessageTypeDef*
- */
-void STEST01A1_DIAG_InitMsg(const USART_MessageTypeDef* p_msg) {
-	msg = *p_msg;
 }
 
 /* Private functions ---------------------------------------------------------*/
@@ -196,15 +178,15 @@ void STEST01A1_DIAG_help() {
 void STEST01A1_DIAG_list_devices() {
 
 	msg.Reset(&msg);
-	for (int i = stest01a1_out; i <= stest01a1_flt2; i += 1) {
+	for (int i = out; i <= flt2; i += 1) {
 		switch (i) {
-			case stest01a1_out:
+			case out:
 				msg.AppendStr("out\n", &msg);
 				break;
-			case stest01a1_flt1:
+			case flt1:
 				msg.AppendStr("flt1\n", &msg);
 				break;
-			case stest01a1_flt2:
+			case flt2:
 				msg.AppendStr("flt2\n", &msg);
 				break;
 			default:
@@ -258,13 +240,13 @@ void STEST01A1_DIAG_list_actions() {
  * @param act: action
  * @retval None
  */
-void STEST01A1_DIAG_switch(STEST01A1_DIAG_DeviceTypeDef dev, STEST01A1_DIAG_ActionTypeDef act) {
+void STEST01A1_DIAG_switch(DIAG_DeviceTypeDef dev, DIAG_ActionTypeDef act) {
 	switch (dev) {
-		case stest01a1_out:
+		case out:
 			if (act == on) STEST01A1_OUT_ON();
 			else STEST01A1_OUT_OFF();
 			break;
-		case stest01a1_all:
+		case all:
 			if (act == off) STEST01A1_OUT_OFF();
 		default:
 			break;
@@ -277,9 +259,9 @@ void STEST01A1_DIAG_switch(STEST01A1_DIAG_DeviceTypeDef dev, STEST01A1_DIAG_Acti
  * @param act: action
  * @retval None
  */
-void STEST01A1_DIAG_single_pulse(STEST01A1_DIAG_DeviceTypeDef dev, uint32_t duration) {
+void STEST01A1_DIAG_single_pulse(DIAG_DeviceTypeDef dev, uint32_t duration) {
 	switch (dev) {
-		case stest01a1_out:
+		case out:
 			STEST01A1_OUT_ON();
 			HAL_Delay(duration);
 			STEST01A1_OUT_OFF();
@@ -295,23 +277,23 @@ void STEST01A1_DIAG_single_pulse(STEST01A1_DIAG_DeviceTypeDef dev, uint32_t dura
  * @param fmt: reading formatting
  * @retval None
  */
-void STEST01A1_DIAG_read(STEST01A1_DIAG_DeviceTypeDef dev, USART_FormatTypeDef fmt) {
+void STEST01A1_DIAG_read(DIAG_DeviceTypeDef dev, DIAG_FormatTypeDef fmt) {
 	msg.Reset(&msg);
 
 	int logic = -1;
 	float reading = -1.0;
 
 	switch (dev) {
-		case stest01a1_out:
+		case out:
 			logic = (int) HAL_GPIO_ReadPin(OUT_CTRL_GPIO_Port, OUT_CTRL_Pin);
 			msg.AppendStr("OUT \t\t = ", &msg);
 			break;
-		case stest01a1_flt1:
+		case flt1:
 			logic = (int) STEST01A1_FLT1;
 			STEST01A1_FLT1 = 0;
 			msg.AppendStr("FLT1 \t\t = ", &msg);
 			break;
-		case stest01a1_flt2:
+		case flt2:
 			logic = (int) STEST01A1_FLT2;
 			STEST01A1_FLT2 = 0;
 			msg.AppendStr("FLT2 \t\t = ", &msg);
@@ -362,10 +344,8 @@ void STEST01A1_DIAG_demag_stat() {
  * @retval None
  */
 void STEST01A1_DIAG_levels() {
-	int dev_count = sizeof(devices)/sizeof(STEST01A1_DIAG_DeviceTypeDef);
-
-	for(int i = 0; i < dev_count; i += 1)
-		STEST01A1_DIAG_read(devices[i], numerical);
+	for(int i = flt1; i <= flt2; i += 1)
+		STEST01A1_DIAG_read(i, numerical);
 }
 
 /**
@@ -374,8 +354,6 @@ void STEST01A1_DIAG_levels() {
  * @retval None
  */
 void STEST01A1_DIAG_states() {
-	int dev_count = sizeof(devices)/sizeof(STEST01A1_DIAG_DeviceTypeDef);
-
-	for(int i = 0; i < dev_count; i += 1)
-		STEST01A1_DIAG_read(devices[i], logical);
+	for(int i = flt1; i <= flt2; i += 1)
+		STEST01A1_DIAG_read(i, logical);
 }

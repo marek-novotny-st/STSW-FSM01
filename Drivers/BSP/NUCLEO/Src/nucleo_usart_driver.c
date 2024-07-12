@@ -182,6 +182,28 @@ HAL_StatusTypeDef NUCLEO_USART_vCOM_WriteChar(char c) {
 }
 
 /**
+ * @brief Performs a quick write to virtual COM stream
+ * @param fmt_str: message content as formatted string
+ * @retval HAL_StatusTypeDef
+ */
+HAL_StatusTypeDef NUCLEO_USART_vCOM_QuickWrite(char * fmt_str) {
+	USART_MessageTypeDef tmp = NUCLEO_USART_vCOM_CreateMessage();
+	tmp.AppendStr(fmt_str, &tmp);
+	NUCLEO_USART_vCOM_FlushWrite(&tmp);
+}
+
+/**
+ * @brief Performs a quick write line to virtual COM stream
+ * @param fmt_str: message content as formatted string
+ * @retval HAL_StatusTypeDef
+ */
+HAL_StatusTypeDef NUCLEO_USART_vCOM_QuickWriteLine(char * fmt_str) {
+	USART_MessageTypeDef tmp = NUCLEO_USART_vCOM_CreateMessage();
+	tmp.AppendStr(fmt_str, &tmp);
+	NUCLEO_USART_vCOM_FlushWriteLine(&tmp);
+}
+
+/**
  * @brief Reads line of characters from virtual COM stream
  * @param msg: message
  * @retval HAL_StatusTypeDef

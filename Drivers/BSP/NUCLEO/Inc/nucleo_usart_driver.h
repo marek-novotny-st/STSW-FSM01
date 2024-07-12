@@ -67,6 +67,8 @@ HAL_StatusTypeDef NUCLEO_USART_vCOM_FlushWriteLine(USART_MessageTypeDef * msg);
 HAL_StatusTypeDef NUCLEO_USART_vCOM_WriteLine(USART_MessageTypeDef * msg);
 HAL_StatusTypeDef NUCLEO_USART_vCOM_ReadLine(USART_MessageTypeDef * msg);
 HAL_StatusTypeDef NUCLEO_USART_vCOM_WriteChar(char c);
+HAL_StatusTypeDef NUCLEO_USART_vCOM_QuickWrite(char * fmt_str);
+HAL_StatusTypeDef NUCLEO_USART_vCOM_QuickWriteLine(char * fmt_str);
 HAL_StatusTypeDef NUCLEO_USART_vCOM_Status();
 
 #ifdef	 __cplusplus

@@ -31,18 +31,10 @@ extern "C" {
 
 
 /* Exported types ------------------------------------------------------------*/
-typedef enum {
-	stest01a1_all,
-	stest01a1_out,
-	stest01a1_flt1,
-	stest01a1_flt2
-} STEST01A1_DIAG_DeviceTypeDef;
+
 
 /* Exported functions --------------------------------------------------------*/
 void STEST01A1_DIAG_IO_Loop(UART_HandleTypeDef * huart);
-void STEST01A1_DIAG_resolve(char * cmd, STEST01A1_DIAG_DeviceTypeDef target);
-void STEST01A1_DIAG_InitCmd(const USART_MessageTypeDef* p_cmd);
-void STEST01A1_DIAG_InitMsg(const USART_MessageTypeDef* p_msg);
 
 #ifdef	 __cplusplus
 }
