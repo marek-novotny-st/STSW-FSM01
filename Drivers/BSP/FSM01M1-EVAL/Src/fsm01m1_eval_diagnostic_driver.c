@@ -21,6 +21,9 @@
 #include "fsm01m1_eval_diagnostic_driver.h"
 #include "fsm01m1_eval_driver.h"
 #include "fsm01m1_eval_usart_driver.h"
+#include "fsm01m1_eval_pulse_driver.h"
+#include "fsm01m1_eval_exports.h"
+#include "stdlib.h"
 #include "strtok_r.h"
 #include "string.h"
 
@@ -78,6 +81,7 @@ void FSM01M1_DIAG_switch(DIAG_DeviceTypeDef dev, DIAG_ActionTypeDef act);
 void FSM01M1_DIAG_resolve(char * cmd, DIAG_DeviceTypeDef target);
 void FSM01M1_DIAG_levels();
 void FSM01M1_DIAG_states();
+void FSM01M1_DIAG_pulse(DIAG_DeviceTypeDef dev, char * config_str);
 
 /* Exported functions --------------------------------------------------------*/
 
@@ -275,6 +279,7 @@ void FSM01M1_DIAG_resolve(char * cmd, DIAG_DeviceTypeDef target) {
 	else if (strcmp(arg, "functions") == 0) FSM01M1_DIAG_list_devices();
 	else if (strcmp(arg, "actions") == 0) FSM01M1_DIAG_list_actions();
 	else if (strcmp(arg, "clear") == 0) FSM01M1_USART_vCOM_Clear();
+	else if (strcmp(arg, "pulse") == 0) FSM01M1_DIAG_pulse(target, cmd);
 	else {
 		msg.Reset(&msg);
 		msg.AppendStr("Invalid command, no actions performed", &msg);
@@ -472,4 +477,26 @@ void FSM01M1_DIAG_states() {
 
 	for(int i = 0; i < dev_count; i += 1)
 		FSM01M1_DIAG_read(devices[i], logical);
+}
+
+void FSM01M1_DIAG_pulse(DIAG_DeviceTypeDef dev, char * config_str) {
+	char * pulse_params[2] = {0};
+	for (unsigned int i = 0; i < 2; i += 1) {
+		char ** param_ptr = &pulse_params[i];
+		*param_ptr = (char *) strtok_r(config_str, ",", &token_ctx);
+		uint32_t len = strcspn(*param_ptr, "\r\n");
+		*param_ptr[len] = '\0';
+	}
+
+	switch (dev) {
+		case out1:
+			FSM01M1_PULSE_PulseGen_TIM_IT(OUT1_TIM_HANDLE, OUT1_TIM, OUT1_TIM_CHANNEL, 1, 65535, 25000);
+			break;
+		case out2:
+			FSM01M1_PULSE_PulseGen_TIM_IT(OUT2_TIM_HANDLE, OUT2_TIM, OUT2_TIM_CHANNEL, 1, 65535, 25000);
+			break;
+		default:
+			// print informative message
+			break;
+	}
 }
